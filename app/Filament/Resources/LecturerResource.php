@@ -19,6 +19,8 @@ class LecturerResource extends Resource
 
     protected static ?string $navigationLabel = 'Dosen';
 
+    protected static ?string $label = 'Dosen';
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form

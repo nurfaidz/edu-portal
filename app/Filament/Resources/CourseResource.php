@@ -20,6 +20,8 @@ class CourseResource extends Resource
 
     protected static ?string $navigationLabel = 'Mata Kuliah';
 
+    protected static ?string $label = 'Mata Kuliah';
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
