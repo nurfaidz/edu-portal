@@ -31,18 +31,6 @@ class LecturerCoursesRelationManager extends RelationManager
                                     ->toArray()
                             )
                             ->required(),
-                        Forms\Components\Select::make('classroom')
-                            ->label('Ruang Kelas')
-                            ->options(\App\Enums\Courses\Classroom::options())
-                            ->required(),
-                        Forms\Components\Select::make('semester')
-                            ->label('Semester')
-                            ->options(\App\Enums\Courses\Semester::options())
-                            ->required(),
-                        Forms\Components\TextInput::make('year')
-                            ->label('Tahun')
-                            ->numeric()
-                            ->required(),
                     ])
                     ->columns(2),
             ]);

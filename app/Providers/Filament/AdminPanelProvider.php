@@ -16,6 +16,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Response;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -57,5 +58,26 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make()
             ]);
+    }
+
+    public function boot(): void
+    {
+        Response::macro('apiError', function ($code, $message, $data = []) {
+            return Response::make(
+                [
+                    'message' => $message,
+                    'data' => $data,
+                ],
+                $code
+            );
+        });
+
+        Response::macro('apiSuccess', function ($data) {
+            return Response::make(
+                [
+                    'data' => $data,
+                ],
+            );
+        });
     }
 }
