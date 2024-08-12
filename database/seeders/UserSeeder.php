@@ -34,16 +34,16 @@ class UserSeeder extends Seeder
 
         // Lecturers
         $lecturers = [
-            ['name' => 'sofyan', 'lecturer_name' => 'Sofyan Lukmanfiandy, S.Kom., M.Kom.', 'email' => 'sofyan.lukmanfiandy@example.com'],
-            ['name' => 'sri', 'lecturer_name' => 'Sri Rahayu, S.Kom. M.Eng.', 'email' => 'sri.rahayu@example.com'],
-            ['name' => 'jemmy', 'lecturer_name' => 'Jemmy Edwin Bororing, S.Kom., M.Eng.', 'email' => 'jemmy.edwin@example.com'],
-            ['name' => 'fatsyahrina', 'lecturer_name' => 'Fatsyahrina Fitriastuti, S.Si., M.T.', 'email' => 'fatsyahrina.fitriastuti@example.com'],
-            ['name' => 'eri', 'lecturer_name' => 'Eri Haryanto, S.Kom., M.Kom.', 'email' => 'eri.haryanto@example.com'],
-            ['name' => 'agustin', 'lecturer_name' => 'Agustin Setiyorini, S.Kom., M.Kom.', 'email' => 'agustin.setiyorini@example.com'],
-            ['name' => 'jeffry', 'lecturer_name' => 'Jeffry Andhika Putra, S.T., M.M., M.Eng.', 'email' => 'jeffry.andhika@example.com'],
-            ['name' => 'yumarlin', 'lecturer_name' => 'Yumarlin MZ, S.Kom., M.Pd., M.Kom.', 'email' => 'yumarlin.mz@example.com'],
-            ['name' => 'ryan', 'lecturer_name' => 'Ryan Ari Setyawan S.Kom., M.Eng.', 'email' => 'ryan.ari@example.com'],
-            ['name' => 'erry', 'lecturer_name' => 'Erry Maricha Oki NH, S.Kom., MTA', 'email' => 'erry.maricha@example.com'],
+            ['name' => 'A01', 'lecturer_name' => 'Sofyan Lukmanfiandy, S.Kom., M.Kom.', 'email' => 'sofyan.lukmanfiandy@example.com'],
+            ['name' => 'A02', 'lecturer_name' => 'Sri Rahayu, S.Kom. M.Eng.', 'email' => 'sri.rahayu@example.com'],
+            ['name' => 'A03', 'lecturer_name' => 'Jemmy Edwin Bororing, S.Kom., M.Eng.', 'email' => 'jemmy.edwin@example.com'],
+            ['name' => 'A04', 'lecturer_name' => 'Fatsyahrina Fitriastuti, S.Si., M.T.', 'email' => 'fatsyahrina.fitriastuti@example.com'],
+            ['name' => 'A05', 'lecturer_name' => 'Eri Haryanto, S.Kom., M.Kom.', 'email' => 'eri.haryanto@example.com'],
+            ['name' => 'A06', 'lecturer_name' => 'Agustin Setiyorini, S.Kom., M.Kom.', 'email' => 'agustin.setiyorini@example.com'],
+            ['name' => 'A07', 'lecturer_name' => 'Jeffry Andhika Putra, S.T., M.M., M.Eng.', 'email' => 'jeffry.andhika@example.com'],
+            ['name' => 'A08', 'lecturer_name' => 'Yumarlin MZ, S.Kom., M.Pd., M.Kom.', 'email' => 'yumarlin.mz@example.com'],
+            ['name' => 'A09', 'lecturer_name' => 'Ryan Ari Setyawan S.Kom., M.Eng.', 'email' => 'ryan.ari@example.com'],
+            ['name' => 'A010', 'lecturer_name' => 'Erry Maricha Oki NH, S.Kom., MTA', 'email' => 'erry.maricha@example.com'],
         ];
 
         $roleLecturer = Role::where('name', RolesRole::Lecturer->value)->first();

@@ -52,8 +52,11 @@ class LecturerResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Kode Dosen')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('lecturer_name')
-                    ->label('Nama')
+                    ->label('Nama Dosen')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->label('Email')
