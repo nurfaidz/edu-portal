@@ -60,7 +60,8 @@ class UserSeeder extends Seeder
 
         // Student
         $student = User::factory()->create([
-            'name' => 'Student',
+            'name' => 'ST01',
+            'student_name' => 'Student Example',
             'email' => 'StudentExample@gmail.com',
         ]);
 

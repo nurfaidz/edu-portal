@@ -1,24 +1,16 @@
 <?php
 
-namespace App\Filament\Resources\LecturerResource\Pages;
+namespace App\Filament\Resources\StudentResource\Pages;
 
-use App\Filament\Resources\LecturerResource;
+use App\Filament\Resources\StudentResource;
 use Filament\Actions;
 use Filament\Infolists\Infolist;
 use Filament\Infolists;
 use Filament\Resources\Pages\ViewRecord;
-use App\Filament\Resources\LecturerResource\Pages;
 
-class ViewLecturer extends ViewRecord
+class ViewStudent extends ViewRecord
 {
-    protected static string $resource = LecturerResource::class;
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\EditAction::make(),
-        ];
-    }
+    protected static string $resource = StudentResource::class;
 
     public function infolist(Infolist $infolist): Infolist
     {
@@ -28,9 +20,9 @@ class ViewLecturer extends ViewRecord
                     ->columns(2)
                     ->schema([
                         Infolists\Components\TextEntry::make('name')
-                            ->label('Kode Dosen'),
-                        Infolists\Components\TextEntry::make('lecturer_name')
-                            ->label('Nama Dosen'),
+                            ->label('Nomor Induk Mahasiswa'),
+                        Infolists\Components\TextEntry::make('student_name')
+                            ->label('Nama Mahasiswa'),
                         Infolists\Components\TextEntry::make('email')
                             ->label('Email'),
                     ])

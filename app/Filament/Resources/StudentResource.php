@@ -28,7 +28,24 @@ class StudentResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\Section::make('Informasi Dosen')
+                ->columns(2)
+                ->schema([
+                    Forms\Components\TextInput::make('name')
+                        ->label('Nomor Induk Mahasiswa')
+                        ->required(),
+                    Forms\Components\TextInput::make('student_name')
+                        ->label('Nama Mahasiswa')
+                        ->required(),
+                    Forms\Components\TextInput::make('email')
+                        ->label('Email')
+                        ->required(),
+                    Forms\Components\TextInput::make('password')
+                        ->label('Password')
+                        ->password()
+                        ->visible(fn($livewire) => $livewire instanceof Pages\CreateStudent)
+                        ->required(),
+                ])
             ]);
     }
 
@@ -37,17 +54,21 @@ class StudentResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                ->label('Nama')
-                ->searchable(),
+                    ->label('Nomor Induk Mahasiswa')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('student_name')
+                    ->label('Nama Mahasiswa')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('email')
-                ->label('Email')
-                ->searchable(),
+                    ->label('Email')
+                    ->searchable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 //
@@ -67,6 +88,7 @@ class StudentResource extends Resource
             'index' => Pages\ListStudents::route('/'),
             'create' => Pages\CreateStudent::route('/create'),
             'edit' => Pages\EditStudent::route('/{record}/edit'),
+            'view' => Pages\ViewStudent::route('/{record}'),
         ];
     }
 

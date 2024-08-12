@@ -31,10 +31,10 @@ class LecturerResource extends Resource
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                            ->label('Username')
+                            ->label('Kode Dosen')
                             ->required(),
                         Forms\Components\TextInput::make('lecturer_name')
-                            ->label('Nama')
+                            ->label('Nama Dosen')
                             ->required(),
                         Forms\Components\TextInput::make('email')
                             ->label('Email')
