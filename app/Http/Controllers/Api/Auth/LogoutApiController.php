@@ -7,5 +7,10 @@ use Illuminate\Http\Request;
 
 class LogoutApiController extends Controller
 {
-    //
+    public function __invoke()
+    {
+        auth()->logout();
+
+        return response()->apiSuccess([]);
+    }
 }

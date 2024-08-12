@@ -12,13 +12,13 @@ class LoginApiController extends Controller
     public function __invoke(Request $request)
     {
         $request->validate([
-            'username' => 'required',
+            'name' => 'required',
             'password' => 'required',
         ]);
 
         $password = $request->password;
 
-        $user = User::where('username', $request->username)->first();
+        $user = User::where('name', $request->name)->first();
 
         if (!$user || !Hash::check($password, $user->password)) {
             return response([
