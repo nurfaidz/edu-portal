@@ -18,6 +18,8 @@ class CourseResource extends Resource
 {
     protected static ?string $model = Course::class;
 
+    protected static ?string $navigationLabel = 'Mata Kuliah';
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -54,9 +56,11 @@ class CourseResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Mata Kuliah'),
+                    ->label('Mata Kuliah')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('code')
-                    ->label('Kode'),
+                    ->label('Kode')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('credits')
                     ->label('SKS'),
                 Tables\Columns\TextColumn::make('type')

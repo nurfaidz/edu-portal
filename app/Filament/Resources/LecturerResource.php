@@ -9,7 +9,6 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -41,7 +40,7 @@ class LecturerResource extends Resource
                         Forms\Components\TextInput::make('password')
                             ->label('Password')
                             ->password()
-                            ->visible(fn ($livewire) => $livewire instanceof Pages\CreateLecturer)
+                            ->visible(fn($livewire) => $livewire instanceof Pages\CreateLecturer)
                             ->required(),
                     ])
             ]);
@@ -51,12 +50,12 @@ class LecturerResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('lecturer_name')
-                ->label('Nama')
-                ->searchable(),
-                TextColumn::make('email')
-                ->label('Email')
-                ->searchable(),
+                Tables\Columns\TextColumn::make('lecturer_name')
+                    ->label('Nama')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable(),
             ])
             ->filters([
                 //
@@ -88,7 +87,7 @@ class LecturerResource extends Resource
     }
 
     public static function getEloquentQuery(): Builder
-{
-    return parent::getEloquentQuery()->lecturer();
-}
+    {
+        return parent::getEloquentQuery()->lecturer();
+    }
 }
