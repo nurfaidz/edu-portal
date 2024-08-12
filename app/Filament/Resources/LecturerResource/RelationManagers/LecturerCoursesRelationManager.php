@@ -30,9 +30,9 @@ class LecturerCoursesRelationManager extends RelationManager
                                     ->pluck('name', 'id')
                                     ->toArray()
                             )
+                            ->searchable()
                             ->required(),
-                    ])
-                    ->columns(2),
+                    ]),
             ]);
     }
 

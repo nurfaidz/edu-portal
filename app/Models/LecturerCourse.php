@@ -13,7 +13,7 @@ class LecturerCourse extends Model
 
     public function lecturer()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function course()

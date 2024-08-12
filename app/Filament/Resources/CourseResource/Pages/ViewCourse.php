@@ -41,7 +41,12 @@ class ViewCourse extends ViewRecord
                     ])
                     ->columns(2),
                 ]);
-
     }
 
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            CourseResource\Widgets\LecturerOverview::make(),
+        ];
+    }
 }

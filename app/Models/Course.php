@@ -14,7 +14,7 @@ class Course extends Model
 
     public function lecturerCourse()
     {
-        return $this->belongsTo(LecturerCourse::class, 'course_id');
+        return $this->belongsTo(LecturerCourse::class, 'id', 'course_id');
     }
 
     public function schedules()
