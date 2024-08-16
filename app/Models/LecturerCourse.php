@@ -18,6 +18,11 @@ class LecturerCourse extends Model
 
     public function course()
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Course::class, 'course_id');
+    }
+
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class, 'lecturer_course_id');
     }
 }

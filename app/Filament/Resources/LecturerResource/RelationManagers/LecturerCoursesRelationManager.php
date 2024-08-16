@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\LecturerResource\RelationManagers;
 
+use App\Enums\Courses\Type;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -43,12 +45,21 @@ class LecturerCoursesRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('course.name')
                     ->label('Mata Kuliah'),
-                Tables\Columns\TextColumn::make('classroom')
-                    ->label('Ruang Kelas'),
-                Tables\Columns\TextColumn::make('semester')
+                Tables\Columns\TextColumn::make('course.code')
+                    ->label('Kode')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('course.credits')
+                    ->label('SKS'),
+                Tables\Columns\TextColumn::make('course.semester')
                     ->label('Semester'),
-                Tables\Columns\TextColumn::make('year')
-                    ->label('Tahun'),
+                Tables\Columns\TextColumn::make('course.type')
+                    ->label('Tipe')
+                    ->formatStateUsing(function ($record) {
+                        return match ($record->course->type) {
+                            Type::Mandatory->value => 'Wajib',
+                            Type::Elective->value => 'Pilihan',
+                        };
+                    }), 
             ])
             ->filters([
                 //
@@ -59,7 +70,29 @@ class LecturerCoursesRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->modalHeading('Menghapus Mata Kuliah Dosen akan otomatis menghapus semua jadwal yang terkait')
+                    ->action(function ($record) {
+                        try {
+                            if ($record->schedules()->exists()) {
+                                $record->schedules()->delete();
+                            }
+
+                            $record->delete();
+
+                            Notification::make()
+                                ->title('Berhasil menghapus')
+                                ->body('Mata kuliah dosen dan semua jadwal yang terkait berhasil dihapus')
+                                ->success()
+                                ->send();
+                        } catch (\Exception $e) {
+                            Notification::make()
+                                ->title('Gagal menghapus')
+                                ->body('Terjadi kesalahan saat menghapus mata kuliah dosen')
+                                ->danger()
+                                ->send();
+                        }
+                    })
             ])
             ->bulkActions([
                 //
