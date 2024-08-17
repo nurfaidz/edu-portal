@@ -88,8 +88,13 @@ class User extends Authenticatable implements FilamentUser
         return $this->role(Role::Student->value, 'student');
     }
 
+    public function lecturerProfile()
+    {
+        return $this->hasOne(Lecturer::class);
+    }
+
     /**
-     * Relationship
+     * Relationship of lecturer
      */
     public function lecturerCourses()
     {
@@ -98,8 +103,6 @@ class User extends Authenticatable implements FilamentUser
 
     public function schedules()
     {
-        return $this->lecturerCourses()->map(function ($lecturerCourse) {
-            return $lecturerCourse->schedules;
-        })->flatten();
+        return $this->hasManyThrough(Schedule::class, LecturerCourse::class, 'user_id', 'lecturer_course_id');
     }
 }

@@ -49,13 +49,17 @@ class UserSeeder extends Seeder
         $roleLecturer = Role::where('name', RolesRole::Lecturer->value)->first();
 
         foreach ($lecturers as $lecturerData) {
-            $lecturer = User::factory()->create([
+            $lecturerUser = User::factory()->create([
                 'name' => $lecturerData['name'],
                 'email' => $lecturerData['email'],
-                'lecturer_name' => $lecturerData['lecturer_name'],
             ]);
 
-            $lecturer->assignRole($roleLecturer);
+            $lecturerUser->lecturerProfile()->create([
+                'name' => $lecturerData['lecturer_name'],
+                'npp' => $lecturerData['name'],
+            ]);
+
+            $lecturerUser->assignRole($roleLecturer);
         }
 
         // Student

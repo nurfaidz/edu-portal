@@ -31,10 +31,7 @@ class LecturerResource extends Resource
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                            ->label('Kode Dosen')
-                            ->required(),
-                        Forms\Components\TextInput::make('lecturer_name')
-                            ->label('Nama Dosen')
+                            ->label('Username')
                             ->required(),
                         Forms\Components\TextInput::make('email')
                             ->label('Email')
@@ -44,6 +41,16 @@ class LecturerResource extends Resource
                             ->password()
                             ->visible(fn($livewire) => $livewire instanceof Pages\CreateLecturer)
                             ->required(),
+                        Forms\Components\Group::make()
+                            ->relationship('lecturerProfile')
+                            ->schema([
+                                Forms\Components\TextInput::make('name')
+                                    ->label('Nama Dosen')
+                                    ->required(),
+                                Forms\Components\TextInput::make('npp')
+                                    ->label('NPP')
+                                    ->required(),
+                            ]),
                     ])
             ]);
     }
@@ -55,7 +62,7 @@ class LecturerResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Kode Dosen')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('lecturer_name')
+                Tables\Columns\TextColumn::make('lecturerProfile.name')
                     ->label('Nama Dosen')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')

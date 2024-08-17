@@ -28,11 +28,17 @@ class ViewLecturer extends ViewRecord
                     ->columns(2)
                     ->schema([
                         Infolists\Components\TextEntry::make('name')
-                            ->label('Kode Dosen'),
-                        Infolists\Components\TextEntry::make('lecturer_name')
-                            ->label('Nama Dosen'),
+                            ->label('Username'),
                         Infolists\Components\TextEntry::make('email')
                             ->label('Email'),
+                        Infolists\Components\Group::make()
+                            ->relationship('lecturerProfile')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('name')
+                                    ->label('Nama Dosen'),
+                                Infolists\Components\TextEntry::make('npp')
+                                    ->label('NPP'),
+                            ]),
                     ])
             ]);
     }
