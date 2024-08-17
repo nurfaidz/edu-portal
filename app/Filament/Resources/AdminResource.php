@@ -27,7 +27,21 @@ class AdminResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\Section::make('Informasi Administator')
+                    ->columns(1)
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Username')
+                            ->required(),
+                        Forms\Components\TextInput::make('email')
+                            ->label('Email')
+                            ->required(),
+                        Forms\Components\TextInput::make('password')
+                            ->label('Password')
+                            ->password()
+                            ->visible(fn($livewire) => $livewire instanceof Pages\CreateAdmin)
+                            ->required(),
+                    ]),
             ]);
     }
 
@@ -46,6 +60,7 @@ class AdminResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -65,6 +80,7 @@ class AdminResource extends Resource
         return [
             'index' => Pages\ListAdmins::route('/'),
             'create' => Pages\CreateAdmin::route('/create'),
+            'view' => Pages\ViewAdmin::route('/{record}'),
             'edit' => Pages\EditAdmin::route('/{record}/edit'),
         ];
     }

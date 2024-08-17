@@ -35,7 +35,7 @@ class LecturerCourseResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('lecturer.lecturer_name')
+                Tables\Columns\TextColumn::make('lecturer.lecturerProfile.name')
                     ->label('Dosen')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('course.name')
