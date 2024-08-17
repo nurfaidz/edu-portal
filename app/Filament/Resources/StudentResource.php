@@ -28,18 +28,25 @@ class StudentResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Informasi Dosen')
+                Forms\Components\Section::make('Informasi Mahasiswa')
                 ->columns(2)
                 ->schema([
                     Forms\Components\TextInput::make('name')
-                        ->label('Nomor Induk Mahasiswa')
-                        ->required(),
-                    Forms\Components\TextInput::make('student_name')
-                        ->label('Nama Mahasiswa')
+                        ->label('Username')
                         ->required(),
                     Forms\Components\TextInput::make('email')
                         ->label('Email')
                         ->required(),
+                    Forms\Components\Group::make()
+                        ->relationship('studentProfile')
+                        ->schema([
+                            Forms\Components\TextInput::make('name')
+                                ->label('Nama Mahasiswa')
+                                ->required(),
+                            Forms\Components\TextInput::make('nim')
+                                ->label('Nomor Induk Mahasiswa')
+                                ->required(),
+                        ]),
                     Forms\Components\TextInput::make('password')
                         ->label('Password')
                         ->password()
@@ -53,10 +60,10 @@ class StudentResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('studentProfile.nim')
                     ->label('Nomor Induk Mahasiswa')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('student_name')
+                Tables\Columns\TextColumn::make('studentProfile.name')
                     ->label('Nama Mahasiswa')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')

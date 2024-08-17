@@ -105,4 +105,12 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasManyThrough(Schedule::class, LecturerCourse::class, 'user_id', 'lecturer_course_id');
     }
+
+    /**
+     * Relationship of student
+     */
+    public function studentProfile()
+    {
+        return $this->hasOne(Student::class);
+    }
 }

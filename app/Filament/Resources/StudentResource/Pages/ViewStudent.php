@@ -16,15 +16,21 @@ class ViewStudent extends ViewRecord
     {
         return $infolist
             ->schema([
-                Infolists\Components\Section::make('Informasi Dosen')
+                Infolists\Components\Section::make('Informasi Mahasiswa')
                     ->columns(2)
                     ->schema([
                         Infolists\Components\TextEntry::make('name')
-                            ->label('Nomor Induk Mahasiswa'),
-                        Infolists\Components\TextEntry::make('student_name')
-                            ->label('Nama Mahasiswa'),
+                            ->label('Username'),
                         Infolists\Components\TextEntry::make('email')
                             ->label('Email'),
+                        Infolists\Components\Group::make()
+                            ->relationship('studentProfile')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('name')
+                                    ->label('Nama Mahasiswa'),
+                                Infolists\Components\TextEntry::make('nim')
+                                    ->label('Nomor Induk Mahasiswa'),
+                            ]),
                     ])
             ]);
     }

@@ -65,8 +65,12 @@ class UserSeeder extends Seeder
         // Student
         $student = User::factory()->create([
             'name' => 'ST01',
-            'student_name' => 'Student Example',
             'email' => 'StudentExample@gmail.com',
+        ]);
+
+        $student->studentProfile()->create([
+            'name' => 'Student Example',
+            'nim' => 'ST01',
         ]);
 
         $roleStudent = Role::where('name', RolesRole::Student->value)->first();
