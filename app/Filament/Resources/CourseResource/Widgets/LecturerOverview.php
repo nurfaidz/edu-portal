@@ -14,7 +14,7 @@ class LecturerOverview extends BaseWidget
     protected function getStats(): array
     {
         $query = $this->record->lecturerCourse;
-        $lecturer = $query ? $query->lecturer->lecturer_name : 'Belum ada dosen';
+        $lecturer = $query ? $query->lecturer->lecturerProfile->name : 'Belum ada dosen';
 
         return [
             BaseWidget\Stat::make('Dosen Mata Kuliah:', $lecturer),

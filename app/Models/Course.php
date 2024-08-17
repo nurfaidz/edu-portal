@@ -17,6 +17,11 @@ class Course extends Model
         return $this->belongsTo(LecturerCourse::class, 'id', 'course_id');
     }
 
+    public function studentCourses()
+    {
+        return $this->hasMany(StudentCourse::class, 'course_id');
+    }
+
     public function schedules()
     {
         return $this->hasManyThrough(Schedule::class, LecturerCourse::class, 'course_id', 'lecturer_course_id');

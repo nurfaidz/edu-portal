@@ -24,7 +24,37 @@ class ViewLecturerCourse extends ViewRecord
         return [
             Actions\DeleteAction::make()
                 ->label('Hapus')
-                ->modalHeading('Hapus jadwal beserta data yang terkait'),
+                ->action(function() {
+                    try {
+                        if ($this->record->schedules()->exists()) {
+                            $this->record->schedules()->delete();
+
+                            Notification::make()
+                                ->title('Berhasil menghapus')
+                                ->body('Jadwal berhasil dihapus')
+                                ->success()
+                                ->send();
+
+                            return redirect()->route('filament.admin.resources.lecturer-courses.view', $this->record);
+                        }
+
+                        Notification::make()
+                            ->title('Belum ada jadwal')
+                            ->danger()
+                            ->send();
+
+                        return;
+
+                    } catch (\Exception $e) {
+                        Notification::make()
+                            ->title('Gagal menghapus')
+                            ->body('Terjadi kesalahan saat menghapus jadwal')
+                            ->danger()
+                            ->send();
+
+                        return;
+                    }
+                }),
             Actions\Action::make('addSchedule')
                 ->label('Tambah Jadwal')
                 ->modalHeading('Tambah Jadwal')
@@ -59,33 +89,43 @@ class ViewLecturerCourse extends ViewRecord
                                 ->required(),
                         ]),
                 ])
-                ->action(function (array $data): void {
-                    $classroom = $data['classroom'];
-                    $startDate = $data['startDate'];
-                    $start_time = $data['start'];
-                    $end_time = $data['end'];
+                ->action(function (array $data) {
+                    try {
+                        $classroom = $data['classroom'];
+                        $startDate = $data['startDate'];
+                        $start_time = $data['start'];
+                        $end_time = $data['end'];
 
-                    $start = \Carbon\Carbon::createFromFormat('Y-m-d', $startDate);
+                        $start = \Carbon\Carbon::createFromFormat('Y-m-d', $startDate);
 
-                    \DB::transaction(function () use ($start, $start_time, $end_time, $classroom) {
-                        for ($i = 0; $i < 14; $i++) {
-                            \App\Models\Schedule::create([
-                                'lecturer_course_id' => $this->record->id,
-                                'classroom' => $classroom,
-                                'date' => $start->copy()->addWeek($i),
-                                'start' => $start_time,
-                                'end' => $end_time,
-                            ]);
-                        }
-                    });
+                        \DB::transaction(function () use ($start, $start_time, $end_time, $classroom) {
+                            for ($i = 0; $i < 14; $i++) {
+                                \App\Models\Schedule::create([
+                                    'lecturer_course_id' => $this->record->id,
+                                    'classroom' => $classroom,
+                                    'date' => $start->copy()->addWeek($i),
+                                    'start' => $start_time,
+                                    'end' => $end_time,
+                                ]);
+                            }
+                        });
 
-                    Notification::make()
-                        ->title('Jadwal berhasil ditambahkan')
-                        ->body('Jadwal berhasil ditambahkan sebanyak 14x pertemuan')
-                        ->success()
-                        ->send();
+                        Notification::make()
+                            ->title('Jadwal berhasil ditambahkan')
+                            ->body('Jadwal berhasil ditambahkan sebanyak 14x pertemuan')
+                            ->success()
+                            ->send();
 
-                    return;
+                        return redirect()->route('filament.admin.resources.lecturer-courses.view', $this->record);
+                    } catch (\Exception $e) {
+                        Notification::make()
+                            ->title('Gagal menambahkan')
+                            ->body('Terjadi kesalahan saat menambahkan jadwal')
+                            ->danger()
+                            ->send();
+
+                        return;
+                    }
                 }),
         ];
     }
