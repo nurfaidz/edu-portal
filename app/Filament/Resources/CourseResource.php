@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enums\Courses\Type;
+use App\Enums\Roles\Role;
 use App\Filament\Resources\CourseResource\Pages;
 use App\Filament\Resources\CourseResource\RelationManagers;
 use App\Models\Course;
@@ -101,5 +102,10 @@ class CourseResource extends Resource
             'view' => Pages\ViewCourse::route('/{record}'),
             'edit' => Pages\EditCourse::route('/{record}/edit'),
         ];
+    }
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->role === Role::Superadmin->value;
     }
 }

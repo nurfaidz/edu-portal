@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\Roles\Role;
 use App\Filament\Resources\LecturerResource\Pages;
 use App\Filament\Resources\LecturerResource\RelationManagers;
 use App\Models\User;
@@ -101,5 +102,10 @@ class LecturerResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->lecturer();
+    }
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->role === Role::Superadmin->value;
     }
 }

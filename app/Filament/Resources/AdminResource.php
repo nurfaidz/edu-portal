@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\Roles\Role;
 use App\Filament\Resources\AdminResource\Pages;
 use App\Filament\Resources\AdminResource\RelationManagers;
 use App\Models\User;
@@ -88,5 +89,10 @@ class AdminResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->admin();
+    }
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->role === Role::Superadmin->value;
     }
 }

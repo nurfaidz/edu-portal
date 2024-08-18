@@ -59,14 +59,15 @@ class LecturerCoursesRelationManager extends RelationManager
                             Type::Mandatory->value => 'Wajib',
                             Type::Elective->value => 'Pilihan',
                         };
-                    }), 
+                    }),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->label('Tambah Mata Kuliah'),
+                    ->label('Tambah Mata Kuliah')
+                    ->modalHeading('Tambah Mata Kuliah Dosen'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

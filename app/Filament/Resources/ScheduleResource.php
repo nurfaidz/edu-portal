@@ -3,8 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Enums\Roles\Role;
-use App\Filament\Resources\LecturerCourseResource\Pages;
-use App\Filament\Resources\LecturerCourseResource\RelationManagers;
+use App\Filament\Resources\ScheduleResource\Pages;
+use App\Filament\Resources\ScheduleResource\RelationManagers;
 use App\Models\LecturerCourse;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -14,11 +14,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class LecturerCourseResource extends Resource
+class ScheduleResource extends Resource
 {
     protected static ?string $model = LecturerCourse::class;
 
-    protected static ?string $navigationLabel = 'Jadwal Dosen';
+    protected static ?string $navigationLabel = 'Jadwal';
 
     protected static ?string $label = 'Jadwal';
 
@@ -36,7 +36,12 @@ class LecturerCourseResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('lecturer.lecturerProfile.name')
+                    ->label('Dosen')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('course.name')
+                    ->label('Mata Kuliah')
+                    ->searchable(),
             ])
             ->filters([
                 //
@@ -52,15 +57,20 @@ class LecturerCourseResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\SchedulesRelationManager::class,
+            RelationManagers\SchedulesRelationManager::class
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListLecturerCourses::route('/'),
-            'view' => Pages\ViewLecturerCourse::route('/{record}'),
+            'index' => Pages\ListSchedules::route('/'),
+            'view' => Pages\ViewSchedule::route('/{record}'),
         ];
+    }
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->role === Role::Superadmin->value;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\LecturerCourseResource\RelationManagers;
+namespace App\Filament\Resources\ScheduleResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -20,22 +20,31 @@ class SchedulesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('title')
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 
     public function table(Table $table): Table
     {
         return $table
-            // ->recordTitleAttribute('Jadwal')
             ->columns([
-
+                Tables\Columns\TextColumn::make('date')
+                    ->label('Tanggal')
+                    ->formatStateUsing(fn($record) => \Carbon\Carbon::parse($record->date)->locale('id')->isoFormat('dddd, D MMMM Y')),
+                Tables\Columns\TextColumn::make('start')
+                    ->label('Jam Mulai'),
+                Tables\Columns\TextColumn::make('end')
+                    ->label('Jam Selesai'),
+                Tables\Columns\TextColumn::make('classroom')
+                    ->label('Ruang Kelas'),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                // Tables\Actions\CreateAction::make(),
+                //
             ])
             ->actions([
                //
