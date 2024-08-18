@@ -63,4 +63,9 @@ class LecturerCourseResource extends Resource
             'view' => Pages\ViewLecturerCourse::route('/{record}'),
         ];
     }
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->role === Role::Lecturer->value;
+    }
 }
