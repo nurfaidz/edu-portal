@@ -6,6 +6,7 @@ use App\Enums\Roles\Role;
 use App\Filament\Resources\LecturerCourseResource\Pages;
 use App\Filament\Resources\LecturerCourseResource\RelationManagers;
 use App\Models\LecturerCourse;
+use App\Models\Schedule;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class LecturerCourseResource extends Resource
 {
-    protected static ?string $model = LecturerCourse::class;
+    protected static ?string $model = Schedule::class;
 
     protected static ?string $navigationLabel = 'Jadwal Dosen';
 
@@ -36,7 +37,18 @@ class LecturerCourseResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('lecturerCourse.course.name')
+                    ->label('Mata Kuliah'),
+                Tables\Columns\TextColumn::make('date')
+                    ->label('Tanggal')
+                    ->formatStateUsing(fn ($record) => \Carbon\Carbon::parse($record->date)->locale('id')->isoFormat('dddd, D MMMM Y')),
+                Tables\Columns\TextColumn::make('start')
+                    ->label('Jam Mulai')
+                    ->formatStateUsing(fn ($record) => \Carbon\Carbon::parse($record->start)->format('H:i')),
+                Tables\Columns\TextColumn::make('end')
+                    ->label('Jam Selesai')
+                    ->formatStateUsing(fn ($record) => \Carbon\Carbon::parse($record->end)->format('H:i')),
+
             ])
             ->filters([
                 //
@@ -63,6 +75,13 @@ class LecturerCourseResource extends Resource
             'view' => Pages\ViewLecturerCourse::route('/{record}'),
         ];
     }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $lecturerId = auth()->user()->id;
+        return Schedule::getScheduleByLecturerId($lecturerId)->toQuery();
+    }
+
 
     public static function canAccess(): bool
     {

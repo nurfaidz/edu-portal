@@ -68,24 +68,24 @@ class User extends Authenticatable implements FilamentUser
 
     public function scopeSuperadmin()
     {
-        return $this->role(Role::Superadmin->value, 'superadmin');
+        return $this->role(Role::Superadmin->value);
     }
 
     // Admin
     public function scopeAdmin(){
-        return $this->role(Role::Admin->value, 'admin');
+        return $this->role(Role::Admin->value);
     }
 
     // Lecturer
     public function scopeLecturer()
     {
-        return $this->role(Role::Lecturer->value, 'lecturer');
+        return $this->role(Role::Lecturer->value);
     }
 
     // Student
     public function scopeStudent()
     {
-        return $this->role(Role::Student->value, 'student');
+        return $this->role(Role::Student->value);
     }
 
     /**
