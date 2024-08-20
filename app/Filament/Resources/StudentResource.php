@@ -23,6 +23,8 @@ class StudentResource extends Resource
 
     protected static ?string $label = 'Mahasiswa';
 
+    protected static ?string $navigationGroup = 'Data Master';
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
