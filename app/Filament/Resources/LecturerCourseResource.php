@@ -48,6 +48,9 @@ class LecturerCourseResource extends Resource
                 Tables\Columns\TextColumn::make('end')
                     ->label('Jam Selesai')
                     ->formatStateUsing(fn ($record) => \Carbon\Carbon::parse($record->end)->format('H:i')),
+                // Tables\Columns\TextColumn::make('')
+                Tables\Columns\TextColumn::make('classroom')
+                    ->label('Ruang Kelas'),
 
             ])
             ->filters([
@@ -79,7 +82,10 @@ class LecturerCourseResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         $lecturerId = auth()->user()->id;
-        return Schedule::getScheduleByLecturerId($lecturerId)->toQuery();
+        // return Schedule::getScheduleByLecturerId($lecturerId)->toQuery();
+        return parent::getEloquentQuery()->whereHas('lecturerCourse', function ($query) use ($lecturerId) {
+            $query->where('user_id', $lecturerId);
+        })->where('date', now()->format('Y-m-d'));
     }
 
 

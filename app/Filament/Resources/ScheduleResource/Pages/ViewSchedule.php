@@ -24,7 +24,7 @@ class ViewSchedule extends ViewRecord
         return [
             Actions\DeleteAction::make()
                 ->label('Hapus')
-                ->action(function() {
+                ->action(function () {
                     try {
                         if ($this->record->schedules()->exists()) {
                             $this->record->schedules()->delete();
@@ -44,7 +44,6 @@ class ViewSchedule extends ViewRecord
                             ->send();
 
                         return;
-
                     } catch (\Exception $e) {
                         Notification::make()
                             ->title('Gagal menghapus')
@@ -60,16 +59,12 @@ class ViewSchedule extends ViewRecord
                 ->modalHeading('Tambah Jadwal')
                 ->modalDescription('Jadwal otomatis membuat 14x pertemuan sesuai dengan hari dan jam yang dipilih')
                 ->modalWidth('2xl')
-                ->fillForm(fn (LecturerCourse $record) => [
-                    'lecturer_id' => $record->lecturer_id,
-                    'course_id' => $record->course_id,
-                ])
                 ->form([
                     Select::make('classroom')
-                            ->label('Ruang Kelas')
-                            ->options([
-                                \App\Enums\Courses\Classroom::A->value => 'Kelas A',
-                            ]),
+                        ->label('Ruang Kelas')
+                        ->options([
+                            \App\Enums\Courses\Classroom::A->value => 'Kelas A',
+                        ]),
                     DatePicker::make('startDate')
                         ->label('Tanggal')
                         ->helperText('Pilih hari dan tanggal untuk pertemuan pertama saja, jadwal akan dibuat otomatis untuk pertemuan selanjutnya setiap minggu')
@@ -134,7 +129,92 @@ class ViewSchedule extends ViewRecord
 
                         return;
                     }
-                }),
+                })
+                ->hidden(fn() => $this->record->schedules()->exists()),
+            Actions\Action::make('editSchedule')
+                ->label('Edit Jadwal')
+                ->modalHeading('Edit Jadwal')
+                ->modalWidth('2xl')
+                ->fillForm([
+                    'classroom' => $this->record->schedules->first()->classroom,
+                    'startDate' => $this->record->schedules->first()->date,
+                    'start' => $this->record->schedules->first()->start,
+                    'end' => $this->record->schedules->first()->end,
+                ])
+                ->form([
+                    Select::make('classroom')
+                        ->label('Ruang Kelas')
+                        ->options([
+                            \App\Enums\Courses\Classroom::A->value => 'Kelas A',
+                        ]),
+                    DatePicker::make('startDate')
+                        ->label('Tanggal')
+                        ->helperText('Pilih hari dan tanggal untuk pertemuan pertama saja, jadwal akan dibuat otomatis untuk pertemuan selanjutnya setiap minggu')
+                        ->native(false)
+                        ->required(),
+                    Section::make('Jam Pertemuan')
+                        ->columns(2)
+                        ->description('Pilih jam pertemuan untuk 14x pertemuan selanjutnya')
+                        ->schema([
+                            TimePicker::make('start')
+                                ->label('Jam Mulai')
+                                ->native(false)
+                                ->required(),
+                            TimePicker::make('end')
+                                ->label('Jam Selesai')
+                                ->native(false)
+                                ->required(),
+                        ]),
+                ])
+                ->action(function (array $data) {
+                    try {
+                        $classroom = $data['classroom'];
+                        $startDate = $data['startDate'];
+                        $start_time = $data['start'];
+                        $end_time = $data['end'];
+
+                        $start = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $startDate . ' ' . $start_time);
+
+                        \DB::transaction(function () use ($start, $start_time, $end_time, $classroom) {
+                            $this->record->schedules()->delete();
+
+                            for ($i = 0; $i < 14; $i++) {
+                                $schedule = \App\Models\Schedule::create([
+                                    'lecturer_course_id' => $this->record->id,
+                                    'classroom' => $classroom,
+                                    'date' => $start->copy()->addWeek($i)->format('Y-m-d'),
+                                    'start' => $start_time,
+                                    'end' => $end_time,
+                                ]);
+
+                                $expired_at = $start->copy()->addWeek($i)->addMinutes(20)->format('Y-m-d H:i:s');
+
+                                \App\Models\Attendance::create([
+                                    'schedule_id' => $schedule->id,
+                                    'expired_at' => $expired_at,
+                                ]);
+                            }
+                        });
+
+                        Notification::make()
+                            ->title('Jadwal berhasil diubah')
+                            ->body('Jadwal berhasil diubah sebanyak 14x pertemuan')
+                            ->success()
+                            ->send();
+
+                        return redirect()->route('filament.admin.resources.schedules.view', $this->record);
+                    } catch (\Exception $e) {
+                        Notification::make()
+                            ->title('Terjadi kesalahan')
+                            ->body($e->getMessage())
+                            ->danger()
+                            ->send();
+
+                        return;
+                    }
+                })
+                ->hidden(fn() => !$this->record->schedules()->exists()),
+
         ];
     }
 
@@ -165,6 +245,6 @@ class ViewSchedule extends ViewRecord
                             }),
                     ])
                     ->columns(2),
-                ]);
+            ]);
     }
 }
