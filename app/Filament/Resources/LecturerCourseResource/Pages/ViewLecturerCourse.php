@@ -46,6 +46,11 @@ class ViewLecturerCourse extends ViewRecord
                         Infolists\Components\TextEntry::make('end')
                             ->label('Jam Selesai')
                             ->formatStateUsing(fn($record) => \Carbon\Carbon::parse($record->end)->format('H:i')),
+                        Infolists\Components\TextEntry::make('attendance.expired_at')
+                            ->label('Batas Absen')
+                            ->formatStateUsing(fn($record) => \Carbon\Carbon::parse($record->attendance->expired_at)->format('H:i')),
+                        Infolists\Components\TextEntry::make('classroom')
+                            ->label('Ruang Kelas'),
                     ])
             ]);
     }

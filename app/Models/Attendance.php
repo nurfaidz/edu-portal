@@ -14,7 +14,10 @@ class Attendance extends Model
         'schedule_id',
         'lecturer_id',
         'student_id',
+        'checkin_at',
+        'expired_at',
         'status',
+        'note',
     ];
 
     protected static function boot()

@@ -16,12 +16,8 @@ class Schedule extends Model
         return $this->belongsTo(LecturerCourse::class, 'lecturer_course_id', 'id');
     }
 
-    public static function getScheduleByLecturerId($lecturerId)
+    public function attendance()
     {
-        return self::whereHas('lecturerCourse', function ($query) use ($lecturerId) {
-            $query->where('user_id', $lecturerId);
-        })
-        ->where('date', now()->format('Y-m-d'))
-        ->get();
+        return $this->belongsTo(Attendance::class, 'id', 'schedule_id');
     }
 }
