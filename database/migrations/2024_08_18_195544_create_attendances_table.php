@@ -18,8 +18,8 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\User::class, 'student_id')->index()->nullable();
             $table->string('status');
             $table->string('note')->nullable();
-            $table->dateTime('checkin_at');
-            $table->dateTime('expired_at');
+            $table->dateTime('checkin_at')->nullable();
+            $table->dateTime('expired_at')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

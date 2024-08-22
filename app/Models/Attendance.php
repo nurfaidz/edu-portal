@@ -17,6 +17,17 @@ class Attendance extends Model
         'status',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($attendance) {
+            if (is_null($attendance->status)) {
+                $attendance->status = \App\States\AttendanceStatus\Absent::class;
+            }
+        });
+    }
+
     public function schedule()
     {
         return $this->belongsTo(Schedule::class);

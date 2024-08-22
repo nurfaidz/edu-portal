@@ -96,16 +96,23 @@ class ViewSchedule extends ViewRecord
                         $start_time = $data['start'];
                         $end_time = $data['end'];
 
-                        $start = \Carbon\Carbon::createFromFormat('Y-m-d', $startDate);
+                        $start = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $startDate . ' ' . $start_time);
 
                         \DB::transaction(function () use ($start, $start_time, $end_time, $classroom) {
                             for ($i = 0; $i < 14; $i++) {
-                                \App\Models\Schedule::create([
+                                $schedule = \App\Models\Schedule::create([
                                     'lecturer_course_id' => $this->record->id,
                                     'classroom' => $classroom,
-                                    'date' => $start->copy()->addWeek($i),
+                                    'date' => $start->copy()->addWeek($i)->format('Y-m-d'),
                                     'start' => $start_time,
                                     'end' => $end_time,
+                                ]);
+
+                                $expired_at = $start->copy()->addWeek($i)->addMinutes(20)->format('Y-m-d H:i:s');
+
+                                \App\Models\Attendance::create([
+                                    'schedule_id' => $schedule->id,
+                                    'expired_at' => $expired_at,
                                 ]);
                             }
                         });
@@ -118,9 +125,10 @@ class ViewSchedule extends ViewRecord
 
                         return redirect()->route('filament.admin.resources.schedules.view', $this->record);
                     } catch (\Exception $e) {
+                        dd($e->getMessage(), \Carbon\Carbon::parse('07:00:00')->addMinutes(15));
                         Notification::make()
-                            ->title('Gagal menambahkan')
-                            ->body('Terjadi kesalahan saat menambahkan jadwal')
+                            ->title('Terjadi kesalahan')
+                            ->body($e->getMessage())
                             ->danger()
                             ->send();
 
