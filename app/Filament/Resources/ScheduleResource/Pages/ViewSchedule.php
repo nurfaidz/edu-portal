@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ScheduleResource\Pages;
 use App\Enums\Courses\Type;
 use App\Filament\Resources\ScheduleResource;
 use App\Models\LecturerCourse;
+use App\Models\User;
 use Filament\Actions;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
@@ -106,9 +107,20 @@ class ViewSchedule extends ViewRecord
                                 $expired_at = $start->copy()->addWeek($i)->addMinutes(20)->format('Y-m-d H:i:s');
 
                                 \App\Models\Attendance::create([
+                                    'attendable_id' => $this->record->user_id,
+                                    'attendable_type' => '\App\Models\Lecturer',
                                     'schedule_id' => $schedule->id,
                                     'expired_at' => $expired_at,
                                 ]);
+
+                                foreach ($this->record->course->studentCourses as $studentCourse) {
+                                    \App\Models\Attendance::create([
+                                        'attendable_id' => $studentCourse->student->id,
+                                        'attendable_type' => '\App\Models\Student',
+                                        'schedule_id' => $schedule->id,
+                                        'expired_at' => $expired_at,
+                                    ]);
+                                }
                             }
                         });
 
@@ -136,10 +148,10 @@ class ViewSchedule extends ViewRecord
                 ->modalHeading('Edit Jadwal')
                 ->modalWidth('2xl')
                 ->fillForm([
-                    'classroom' => $this->record->schedules->first()->classroom,
-                    'startDate' => $this->record->schedules->first()->date,
-                    'start' => $this->record->schedules->first()->start,
-                    'end' => $this->record->schedules->first()->end,
+                    'classroom' => $this->record->schedules->isNotEmpty() ? $this->record->schedules->first()->classroom : null,
+                    'startDate' => $this->record->schedules->isNotEmpty() ? $this->record->schedules->first()->date : null,
+                    'start' => $this->record->schedules->isNotEmpty() ? $this->record->schedules->first()->start : null,
+                    'end' => $this->record->schedules->isNotEmpty() ? $this->record->schedules->first()->end : null,
                 ])
                 ->form([
                     Select::make('classroom')
@@ -190,9 +202,20 @@ class ViewSchedule extends ViewRecord
                                 $expired_at = $start->copy()->addWeek($i)->addMinutes(20)->format('Y-m-d H:i:s');
 
                                 \App\Models\Attendance::create([
+                                    'attendable_id' => $this->record->user_id,
+                                    'attendable_type' => \App\Models\Lecturer::class,
                                     'schedule_id' => $schedule->id,
                                     'expired_at' => $expired_at,
                                 ]);
+
+                                foreach ($this->record->course->studentCourses as $studentCourse) {
+                                    \App\Models\Attendance::create([
+                                        'attendable_id' => $studentCourse->student->id,
+                                        'attendable_type' => \App\Models\Student::class,
+                                        'schedule_id' => $schedule->id,
+                                        'expired_at' => $expired_at,
+                                    ]);
+                                }
                             }
                         });
 

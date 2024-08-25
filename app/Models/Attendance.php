@@ -10,15 +10,7 @@ class Attendance extends Model
 {
     use HasFactory, HasStates;
 
-    protected $fillable = [
-        'schedule_id',
-        'lecturer_id',
-        'student_id',
-        'checkin_at',
-        'expired_at',
-        'status',
-        'note',
-    ];
+    protected $guarded = [];
 
     protected static function boot()
     {
@@ -26,7 +18,7 @@ class Attendance extends Model
 
         static::creating(function ($attendance) {
             if (is_null($attendance->status)) {
-                $attendance->status = \App\States\AttendanceStatus\Absent::class;
+                $attendance->status = \App\States\AttendanceStatus\Absent::$name;
             }
         });
     }

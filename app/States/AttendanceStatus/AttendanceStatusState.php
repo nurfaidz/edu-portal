@@ -21,9 +21,7 @@ abstract class AttendanceStatusState extends State implements Wireable
             ->default(Absent::class)
             ->allowTransitions([
                 [Absent::class, Present::class],
-                [Present::class, Absent::class],
                 [Absent::class, Excused::class],
-                [Excused::class, Absent::class],
             ]);
     }
 }

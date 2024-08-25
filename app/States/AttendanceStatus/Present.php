@@ -4,7 +4,7 @@ namespace App\States\AttendanceStatus;
 
 class Present extends AttendanceStatusState
 {
-    public static string $name = 'Present';
+    public static string $name = 'Hadir';
 
     public function label(): string
     {

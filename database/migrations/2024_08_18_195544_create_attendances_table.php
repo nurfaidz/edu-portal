@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\Schedule::class)->index();
-            $table->foreignIdFor(\App\Models\User::class, 'lecturer_id')->index()->nullable();
-            $table->foreignIdFor(\App\Models\User::class, 'student_id')->index()->nullable();
+            $table->morphs('attendable');
             $table->string('status');
             $table->string('note')->nullable();
             $table->dateTime('checkin_at')->nullable();

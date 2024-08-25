@@ -16,8 +16,13 @@ class Schedule extends Model
         return $this->belongsTo(LecturerCourse::class, 'lecturer_course_id', 'id');
     }
 
-    public function attendance()
+    public function attendanceLecturer()
     {
-        return $this->belongsTo(Attendance::class, 'id', 'schedule_id');
+        return $this->belongsTo(Attendance::class, 'id', 'schedule_id')->where('attendable_type', '\App\Models\Lecturer',)->where('attendable_id', auth()->id());
     }
+
+    // public function attendance()
+    // {
+    //     return $this->belongsTo(Attendance::class, 'id', 'schedule_id');
+    // }
 }

@@ -63,17 +63,26 @@ class UserSeeder extends Seeder
         }
 
         // Student
-        $student = User::factory()->create([
-            'name' => 'ST01',
-            'email' => 'StudentExample@gmail.com',
-        ]);
-
-        $student->studentProfile()->create([
-            'name' => 'Student Example',
-            'nim' => 'ST01',
-        ]);
+        $students = [
+            ['name' => 'ST01', 'student_name' => 'Student 01', 'email' => 'student01@example.com'],
+            ['name' => 'ST02', 'student_name' => 'Student 02', 'email' => 'student02@example.com'],
+            ['name' => 'ST03', 'student_name' => 'Student 03', 'email' => 'student03@example.com']
+        ];
 
         $roleStudent = Role::where('name', RolesRole::Student->value)->first();
-        $student->assignRole($roleStudent);
+
+        foreach ($students as $studentData) {
+            $studentUser = User::factory()->create([
+                'name' => $studentData['name'],
+                'email' => $studentData['email'],
+            ]);
+
+            $studentUser->studentProfile()->create([
+                'name' => $studentData['student_name'],
+                'nim' => $studentData['name'],
+            ]);
+
+            $studentUser->assignRole($roleStudent);
+        }
     }
 }

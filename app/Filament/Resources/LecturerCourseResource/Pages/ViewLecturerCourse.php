@@ -5,6 +5,9 @@ namespace App\Filament\Resources\LecturerCourseResource\Pages;
 use App\Enums\Courses\Type;
 use App\Filament\Resources\LecturerCourseResource;
 use App\Models\LecturerCourse;
+use App\States\AttendanceStatus\Absent;
+use App\States\AttendanceStatus\Excused;
+use App\States\AttendanceStatus\Present;
 use Filament\Actions;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
@@ -22,6 +25,15 @@ class ViewLecturerCourse extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('Buat Barcode')
+                ->label('Buat Barcode')
+                ->action(function () {
+                    Notification::make()
+                        ->title('Get Will Soon')
+                        ->body('Fitur ini akan segera hadir.')
+                        ->warning()
+                        ->send();
+                }),
             Actions\Action::make('attendance')
                 ->label('Lakukan Absensi')
                 ->modalHeading('Lakukan Absensi'),
@@ -46,11 +58,19 @@ class ViewLecturerCourse extends ViewRecord
                         Infolists\Components\TextEntry::make('end')
                             ->label('Jam Selesai')
                             ->formatStateUsing(fn($record) => \Carbon\Carbon::parse($record->end)->format('H:i')),
-                        Infolists\Components\TextEntry::make('attendance.expired_at')
+                        Infolists\Components\TextEntry::make('attendanceLecturer.expired_at')
                             ->label('Batas Absen')
-                            ->formatStateUsing(fn($record) => \Carbon\Carbon::parse($record->attendance->expired_at)->format('H:i')),
+                            ->formatStateUsing(fn($record) => \Carbon\Carbon::parse($record->attendanceLecturer->expired_at)->format('H:i')),
                         Infolists\Components\TextEntry::make('classroom')
                             ->label('Ruang Kelas'),
+                        Infolists\Components\TextEntry::make('attendanceLecturer.status')
+                            ->label('Status Absensi')
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                Absent::$name => 'danger',
+                                Excused::$name => 'warning',
+                                Present::$name => 'success',
+                            }),
                     ])
             ]);
     }
