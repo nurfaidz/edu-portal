@@ -66,7 +66,7 @@ class LecturerCourseResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\AttendanceStudentsRelationManager::class,
         ];
     }
 

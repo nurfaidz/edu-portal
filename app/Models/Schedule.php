@@ -21,8 +21,8 @@ class Schedule extends Model
         return $this->belongsTo(Attendance::class, 'id', 'schedule_id')->where('attendable_type', '\App\Models\Lecturer',)->where('attendable_id', auth()->id());
     }
 
-    // public function attendance()
-    // {
-    //     return $this->belongsTo(Attendance::class, 'id', 'schedule_id');
-    // }
+    public function attendanceStudents()
+    {
+        return $this->hasMany(Attendance::class, 'schedule_id', 'id')->where('attendable_type', '\App\Models\Student');
+    }
 }
