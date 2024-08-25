@@ -19,7 +19,7 @@ class LecturerCourseResource extends Resource
 {
     protected static ?string $model = Schedule::class;
 
-    protected static ?string $navigationLabel = 'Jadwal Dosen';
+    protected static ?string $navigationLabel = 'Jadwal';
 
     protected static ?string $label = 'Jadwal';
 
@@ -50,7 +50,6 @@ class LecturerCourseResource extends Resource
                     ->formatStateUsing(fn ($record) => \Carbon\Carbon::parse($record->end)->format('H:i')),
                 Tables\Columns\TextColumn::make('classroom')
                     ->label('Ruang Kelas'),
-
             ])
             ->filters([
                 //

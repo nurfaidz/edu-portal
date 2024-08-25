@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\ModelStates\HasStates;
@@ -23,6 +24,21 @@ class Attendance extends Model
         });
     }
 
+    /**
+     * Scope a query to only include attendance for a specific lecturer.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeGetAttendanceForLecturerById(Builder $query): Builder
+    {
+        return $query->where('attendable_type', '\App\Models\Lecturer')
+            ->where('attendable_id', auth()->id());
+    }
+
+    /**
+     * Relationship
+     */
     public function schedule()
     {
         return $this->belongsTo(Schedule::class);
