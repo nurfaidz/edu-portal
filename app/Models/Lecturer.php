@@ -16,4 +16,9 @@ class Lecturer extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function courses()
+    {
+        return $this->user->lecturerCourses();
+    }
 }
