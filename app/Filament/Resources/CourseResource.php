@@ -39,9 +39,19 @@ class CourseResource extends Resource
                             ->required(),
                         Forms\Components\TextInput::make('code')
                             ->label('Kode')
+                            ->maxLength(6)
+                            ->minLength(6)
+                            ->numeric()
+                            ->required(),
+                        Forms\Components\TextInput::make('semester')
+                            ->label('Semester')
+                            ->minValue(1)
+                            ->numeric()
                             ->required(),
                         Forms\Components\TextInput::make('credits')
                             ->label('SKS')
+                            ->minValue(1)
+                            ->numeric()
                             ->required(),
                         Forms\Components\Select::make('type')
                             ->label('Tipe')
