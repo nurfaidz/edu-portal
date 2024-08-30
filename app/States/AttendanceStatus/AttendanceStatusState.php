@@ -18,10 +18,11 @@ abstract class AttendanceStatusState extends State implements Wireable
     public static function config(): StateConfig
     {
         return parent::config()
-            ->default(Absent::class)
+            ->default(Pending::class)
             ->allowTransitions([
-                [Absent::class, Present::class],
-                [Absent::class, Excused::class],
+                [Pending::class, Present::class],
+                [Pending::class, Absent::class],
+                [Pending::class, Excused::class],
             ]);
     }
 }

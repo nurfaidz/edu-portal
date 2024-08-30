@@ -19,7 +19,7 @@ class Attendance extends Model
 
         static::creating(function ($attendance) {
             if (is_null($attendance->status)) {
-                $attendance->status = \App\States\AttendanceStatus\Absent::$name;
+                $attendance->status = \App\States\AttendanceStatus\Pending::$name;
             }
         });
     }

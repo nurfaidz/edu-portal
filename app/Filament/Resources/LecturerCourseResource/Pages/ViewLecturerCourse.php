@@ -58,7 +58,7 @@ class ViewLecturerCourse extends ViewRecord
                         Infolists\Components\TextEntry::make('end')
                             ->label('Jam Selesai')
                             ->formatStateUsing(fn($record) => \Carbon\Carbon::parse($record->end)->format('H:i')),
-                        Infolists\Components\TextEntry::make('attendanceLecturer.expired_at')
+                        Infolists\Components\TextEntry::make('id')
                             ->label('Batas Absen')
                             ->formatStateUsing(fn($record) => \Carbon\Carbon::parse($record->attendanceLecturer->expired_at)->format('H:i')),
                         Infolists\Components\TextEntry::make('classroom')
@@ -66,11 +66,12 @@ class ViewLecturerCourse extends ViewRecord
                         Infolists\Components\TextEntry::make('attendanceLecturer.status')
                             ->label('Status Absensi')
                             ->badge()
-                            ->color(fn (string $state): string => match ($state) {
+                            ->color(fn (string $state, $record): string => match ($state) {
                                 Absent::$name => 'danger',
                                 Excused::$name => 'warning',
                                 Present::$name => 'success',
-                            }),
+                                $record->attendanceLecturer->expired_at < now() && is_null($record->attendanceLecturer->status) => 'secondary',
+                            })
                     ])
             ]);
     }

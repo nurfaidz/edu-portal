@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(\App\Models\Schedule::class)->index();
             $table->morphs('attendable');
-            $table->string('status');
+            $table->string('status')->nullable();
             $table->string('note')->nullable();
             $table->dateTime('checkin_at')->nullable();
             $table->dateTime('expired_at')->nullable();

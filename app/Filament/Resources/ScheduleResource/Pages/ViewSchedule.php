@@ -28,6 +28,11 @@ class ViewSchedule extends ViewRecord
                 ->action(function () {
                     try {
                         if ($this->record->schedules()->exists()) {
+
+                            foreach ($this->record->schedules as $schedule) {
+                                $schedule->attendance()->delete();
+                            }
+
                             $this->record->schedules()->delete();
 
                             Notification::make()
@@ -132,7 +137,6 @@ class ViewSchedule extends ViewRecord
 
                         return redirect()->route('filament.admin.resources.schedules.view', $this->record);
                     } catch (\Exception $e) {
-                        dd($e->getMessage(), \Carbon\Carbon::parse('07:00:00')->addMinutes(15));
                         Notification::make()
                             ->title('Terjadi kesalahan')
                             ->body($e->getMessage())
@@ -188,6 +192,11 @@ class ViewSchedule extends ViewRecord
                         $start = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $startDate . ' ' . $start_time);
 
                         \DB::transaction(function () use ($start, $start_time, $end_time, $classroom) {
+
+                            foreach ($this->record->schedules as $schedule) {
+                                $schedule->attendance()->delete();
+                            }
+
                             $this->record->schedules()->delete();
 
                             for ($i = 0; $i < 14; $i++) {
@@ -203,7 +212,7 @@ class ViewSchedule extends ViewRecord
 
                                 \App\Models\Attendance::create([
                                     'attendable_id' => $this->record->user_id,
-                                    'attendable_type' => \App\Models\Lecturer::class,
+                                    'attendable_type' => '\App\Models\Lecturer',
                                     'schedule_id' => $schedule->id,
                                     'expired_at' => $expired_at,
                                 ]);
@@ -211,7 +220,7 @@ class ViewSchedule extends ViewRecord
                                 foreach ($this->record->course->studentCourses as $studentCourse) {
                                     \App\Models\Attendance::create([
                                         'attendable_id' => $studentCourse->student->id,
-                                        'attendable_type' => \App\Models\Student::class,
+                                        'attendable_type' => '\App\Models\Student',
                                         'schedule_id' => $schedule->id,
                                         'expired_at' => $expired_at,
                                     ]);

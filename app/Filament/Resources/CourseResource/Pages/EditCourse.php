@@ -58,10 +58,17 @@ class EditCourse extends EditRecord
                     ->form([
                         Forms\Components\Select::make('student_id')
                             ->label('Mahasiswa')
-                            ->options(
-                                \App\Models\Student::pluck('name', 'user_id')
-                            )
+                            ->options(function () {
+                                return \App\Models\Student::all()->pluck('nim_name', 'user_id');
+                            })
                             ->searchable()
+                            ->getSearchResultsUsing(function (string $search) {
+                                return \App\Models\Student::query()
+                                    ->where('nim', 'like', "%{$search}%")
+                                    ->orWhere('name', 'like', "%{$search}%")
+                                    ->get()
+                                    ->pluck('nim_name', 'user_id');
+                            })
                             ->multiple()
                             ->required(),
                     ])
