@@ -47,15 +47,20 @@ class ViewLecturerCourse extends ViewRecord
                 ->action(function (array $data, $record) {
 
                     try {
-                        if (now() < $record->start) {
+                        $date = \Carbon\Carbon::parse($record->date);
+                        $start = \Carbon\Carbon::parse($record->start);
+
+                        $startDate = $date->setTimeFrom($start)->subMinutes(10);
+
+                        if (now() < $startDate) {
                             Notification::make()
                                 ->title('Anda terlalu cepat absen')
-                                ->body('Anda tidak bisa melakukan absensi karena belum memasuki batas waktu absen.')
+                                ->body('Anda dapat melakukan absensi 10 menit sebelum jadwal dimulai.')
                                 ->danger()
                                 ->send();
 
                             return;
-                        } elseif (now() > $record->end) {
+                        } elseif (now() > $record->attendanceLecturer->expired_at) {
                             Notification::make()
                                 ->title('Anda terlambat absen')
                                 ->body('Anda tidak bisa melakukan absensi karena sudah melewati batas waktu absen.')
@@ -65,7 +70,7 @@ class ViewLecturerCourse extends ViewRecord
                             return;
                         } else {
                             \DB::transaction(function () use ($data, $record) {
-                                $record->update([
+                                $record->attendanceLecturer->update([
                                     'status' => $data['absent'],
                                 ]);
                             });
@@ -79,6 +84,45 @@ class ViewLecturerCourse extends ViewRecord
                     } catch (\Exception $e) {
                         Notification::make()
                             ->title('Absensi gagal')
+                            ->body($e->getMessage())
+                            ->danger()
+                            ->send();
+                    }
+                })
+                ->visible(fn($record) => $record->attendanceLecturer->status === Pending::$name),
+            Actions\Action::make('addExpire')
+                ->label('Tambah Batas Absen')
+                ->modalHeading('Tambah Batas Absen')
+                ->form([
+                    Forms\Components\TextInput::make('expired_at')
+                        ->label('Menit Batas Absen')
+                        ->helperText(' *Masukkan dalam menit, contoh 30 = 30 menit')
+                        ->minValue(1)
+                        ->required()
+                ])
+                ->action(function (array $data, $record) {
+                    try {
+                        $date = \Carbon\Carbon::parse($record->date);
+                        $expiredAt = \Carbon\Carbon::parse($record->attendanceLecturer->expired_at);
+
+                        $expiredDate = $date->setTimeFrom($expiredAt);
+                        $addExpired = $expiredDate->addMinutes((int) $data['expired_at']);
+
+                        \DB::transaction(function () use ($addExpired, $record) {
+                            $record->attendanceLecturer->update([
+                                'expired_at' => $addExpired,
+                            ]);
+
+                            $record->attendanceStudents->each(function ($attendanceStudent) use ($addExpired) {
+                                $attendanceStudent->update([
+                                    'expired_at' => $addExpired,
+                                ]);
+                            });
+                        });
+
+                    } catch (\Exception $e) {
+                        Notification::make()
+                            ->title('Gagal menambah batas absen')
                             ->body($e->getMessage())
                             ->danger()
                             ->send();

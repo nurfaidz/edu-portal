@@ -30,4 +30,14 @@ class Schedule extends Model
     {
         return $this->hasMany(Attendance::class, 'schedule_id', 'id')->where('attendable_type', '\App\Models\Student');
     }
+
+    /**
+     * Get the attendance record by the given lecturer id and by today's date.
+     */
+    public function getAttendanceLecturerByToday()
+    {
+        dd('test', $this->attendanceLecturer);
+        return $this->attendanceLecturer()->whereDate('checkin_at', now()->toDateString())->first();
+    }
+
 }
