@@ -49,6 +49,7 @@ class ViewAttendanceLecturer extends ViewRecord
                                 \App\States\AttendanceStatus\Absent::$name => 'danger',
                                 \App\States\AttendanceStatus\Excused::$name => 'warning',
                                 \App\States\AttendanceStatus\Present::$name => 'success',
+                                \App\States\AttendanceStatus\Pending::$name => 'gray'
                             }),
                     ])
             ]);

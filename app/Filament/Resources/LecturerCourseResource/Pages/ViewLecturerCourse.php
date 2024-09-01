@@ -7,12 +7,10 @@ use App\Filament\Resources\LecturerCourseResource;
 use App\Models\LecturerCourse;
 use App\States\AttendanceStatus\Absent;
 use App\States\AttendanceStatus\Excused;
+use App\States\AttendanceStatus\Pending;
 use App\States\AttendanceStatus\Present;
 use Filament\Actions;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TimePicker;
+use Filament\Forms;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
@@ -36,7 +34,66 @@ class ViewLecturerCourse extends ViewRecord
                 }),
             Actions\Action::make('attendance')
                 ->label('Lakukan Absensi')
-                ->modalHeading('Lakukan Absensi'),
+                ->modalHeading('Lakukan Absensi')
+                ->form([
+                    Forms\Components\Select::make('absent')
+                        ->label('')
+                        ->options([
+                            Present::$name => 'Hadir',
+                            Absent::$name => 'Tidak Hadir',
+                            Excused::$name => 'Izin',
+                        ])
+                ])
+                ->action(function (array $data, $record) {
+
+                    try {
+                        if (now() < $record->start) {
+                            Notification::make()
+                                ->title('Anda terlalu cepat absen')
+                                ->body('Anda tidak bisa melakukan absensi karena belum memasuki batas waktu absen.')
+                                ->danger()
+                                ->send();
+
+                            return;
+                        } elseif (now() > $record->end) {
+                            Notification::make()
+                                ->title('Anda terlambat absen')
+                                ->body('Anda tidak bisa melakukan absensi karena sudah melewati batas waktu absen.')
+                                ->danger()
+                                ->send();
+
+                            return;
+                        } else {
+                            \DB::transaction(function () use ($data, $record) {
+                                $record->update([
+                                    'status' => $data['absent'],
+                                ]);
+                            });
+
+                            Notification::make()
+                                ->title('Absensi berhasil')
+                                ->body('Absensi berhasil disimpan.')
+                                ->success()
+                                ->send();
+                        }
+                    } catch (\Exception $e) {
+                        Notification::make()
+                            ->title('Absensi gagal')
+                            ->body($e->getMessage())
+                            ->danger()
+                            ->send();
+                    }
+                }),
+            Actions\Action::make('changeSchedule')
+                ->label('Ganti Jadwal')
+                ->modalHeading('Ganti Jadwal Pembelajaran')
+                ->action(function () {
+                    Notification::make()
+                        ->title('Get Will Soon')
+                        ->body('Fitur ini akan segera hadir.')
+                        ->warning()
+                        ->send();
+                }),
         ];
     }
 
@@ -66,11 +123,11 @@ class ViewLecturerCourse extends ViewRecord
                         Infolists\Components\TextEntry::make('attendanceLecturer.status')
                             ->label('Status Absensi')
                             ->badge()
-                            ->color(fn (string $state, $record): string => match ($state) {
+                            ->color(fn(string $state, $record): string => match ($state) {
                                 Absent::$name => 'danger',
                                 Excused::$name => 'warning',
                                 Present::$name => 'success',
-                                $record->attendanceLecturer->expired_at < now() && is_null($record->attendanceLecturer->status) => 'secondary',
+                                Pending::$name => 'gray'
                             })
                     ])
             ]);

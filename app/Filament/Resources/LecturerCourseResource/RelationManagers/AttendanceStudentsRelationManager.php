@@ -4,6 +4,7 @@ namespace App\Filament\Resources\LecturerCourseResource\RelationManagers;
 
 use App\States\AttendanceStatus\Absent;
 use App\States\AttendanceStatus\Excused;
+use App\States\AttendanceStatus\Pending;
 use App\States\AttendanceStatus\Present;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -44,6 +45,7 @@ class AttendanceStudentsRelationManager extends RelationManager
                         Present::$name => 'success',
                         Absent::$name => 'danger',
                         Excused::$name => 'warning',
+                        Pending::$name => 'gray'
                     }),
             ])
             ->filters([

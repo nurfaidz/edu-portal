@@ -19,7 +19,7 @@ class Pending extends AttendanceStatusState
         return 'secondary';
     }
 
-    public function toLivewire()
+    public function toLivewire(): static
     {
         return new static(static::getModel());
     }
