@@ -18,6 +18,9 @@ return new class extends Migration
             $table->date('date');
             $table->time('start');
             $table->time('end');
+            $table->json('extras')->nullable();
+            $table->boolean('is_reschedule')->default(false);
+            $table->text('reschedule_note')->nullable();
             $table->timestamps();
         });
     }

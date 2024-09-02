@@ -131,13 +131,52 @@ class ViewLecturerCourse extends ViewRecord
             Actions\Action::make('changeSchedule')
                 ->label('Ganti Jadwal')
                 ->modalHeading('Ganti Jadwal Pembelajaran')
-                ->action(function () {
-                    Notification::make()
-                        ->title('Get Will Soon')
-                        ->body('Fitur ini akan segera hadir.')
-                        ->warning()
-                        ->send();
-                }),
+                ->form([
+                    Forms\Components\DatePicker::make('date')
+                        ->label('Tanggal')
+                        ->helperText('Pilih hari dan tanggal untuk pertemuan pengganti')
+                        ->native(false)
+                        ->required(),
+                    Forms\Components\Section::make('Jam Pertemuan')
+                        ->columns(2)
+                        ->description('Pilih jam pertemuan pengganti')
+                        ->schema([
+                            Forms\Components\TimePicker::make('start')
+                                ->label('Jam Mulai')
+                                ->native(false)
+                                ->required(),
+                            Forms\Components\TimePicker::make('end')
+                                ->label('Jam Selesai')
+                                ->native(false)
+                                ->required(),
+                        ]),
+                ])
+                ->action(function (array $data, $record) {
+                    try {
+                        \DB::transaction(function () use ($data, $record) {
+                            $record->date = $data['date'];
+                            $record->start = $data['start'];
+                            $record->end = $data['end'];
+                            $record->extras = [
+                                'original_start' => $record->start,
+                                'original_end' => $record->end,
+                                'original_date' => $record->date,
+                            ];
+                            $record->is_reschedule = true;
+
+                            dd($record); // Check if the data is correct, but don't already save it
+                            $record->save();
+                        });
+
+                    } catch (\Exception $e) {
+                        Notification::make()
+                            ->title('Gagal mengganti jadwal')
+                            ->body($e->getMessage())
+                            ->danger()
+                            ->send();
+                    }
+                })
+                ->visible(fn($record) => $record->attendanceLecturer->status === Pending::$name),
         ];
     }
 
