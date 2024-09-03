@@ -80,6 +80,8 @@ class ViewLecturerCourse extends ViewRecord
                                 ->body('Absensi berhasil disimpan.')
                                 ->success()
                                 ->send();
+
+                            return;
                         }
                     } catch (\Exception $e) {
                         Notification::make()
@@ -87,6 +89,8 @@ class ViewLecturerCourse extends ViewRecord
                             ->body($e->getMessage())
                             ->danger()
                             ->send();
+
+                        return;
                     }
                 })
                 ->visible(fn($record) => $record->attendanceLecturer->status === Pending::$name),
@@ -120,12 +124,22 @@ class ViewLecturerCourse extends ViewRecord
                             });
                         });
 
+                        Notification::make()
+                            ->title('Berhasil menambah batas absen')
+                            ->body('Batas absen berhasil ditambahkan.')
+                            ->success()
+                            ->send();
+
+                        return;
+
                     } catch (\Exception $e) {
                         Notification::make()
                             ->title('Gagal menambah batas absen')
                             ->body($e->getMessage())
                             ->danger()
                             ->send();
+
+                        return;
                     }
                 }),
             Actions\Action::make('changeSchedule')
@@ -150,6 +164,9 @@ class ViewLecturerCourse extends ViewRecord
                                 ->native(false)
                                 ->required(),
                         ]),
+                    Forms\Components\Textarea::make('reschedule_note')
+                        ->label('Alasan Perubahan Jadwal')
+                        ->required(),
                 ])
                 ->action(function (array $data, $record) {
                     try {
@@ -162,11 +179,24 @@ class ViewLecturerCourse extends ViewRecord
                                 'original_end' => $record->end,
                                 'original_date' => $record->date,
                             ];
+                            $record->reschedule_note = $data['reschedule_note'];
                             $record->is_reschedule = true;
 
-                            dd($record); // Check if the data is correct, but don't already save it
                             $record->save();
+
+                            $record->attendanceLecturer->update([
+                                'expired_at' => \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $record->date . ' ' . $record->start)->addMinutes(20),
+                                'status' => Pending::$name,
+                            ]);
                         });
+
+                        Notification::make()
+                            ->title('Berhasil mengganti jadwal')
+                            ->body('Jadwal berhasil diganti.')
+                            ->success()
+                            ->send();
+
+                        return;
 
                     } catch (\Exception $e) {
                         Notification::make()
@@ -174,6 +204,8 @@ class ViewLecturerCourse extends ViewRecord
                             ->body($e->getMessage())
                             ->danger()
                             ->send();
+
+                        return;
                     }
                 })
                 ->visible(fn($record) => $record->attendanceLecturer->status === Pending::$name),

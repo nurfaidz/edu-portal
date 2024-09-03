@@ -31,13 +31,11 @@ class Schedule extends Model
         return $this->hasMany(Attendance::class, 'schedule_id', 'id')->where('attendable_type', '\App\Models\Student');
     }
 
-    /**
-     * Get the attendance record by the given lecturer id and by today's date.
+    /*
+     * Scope
      */
-    public function getAttendanceLecturerByToday()
+    public function scopeReschedule($query)
     {
-        dd('test', $this->attendanceLecturer);
-        return $this->attendanceLecturer()->whereDate('checkin_at', now()->toDateString())->first();
+        return $query->where('is_reschedule', true);
     }
-
 }
