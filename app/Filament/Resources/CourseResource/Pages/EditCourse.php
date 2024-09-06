@@ -7,6 +7,7 @@ use Filament\Actions;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Livewire\Form;
 
 class EditCourse extends EditRecord
 {
@@ -71,6 +72,19 @@ class EditCourse extends EditRecord
                             })
                             ->multiple()
                             ->required(),
+                        Forms\Components\TextInput::make('semester')
+                            ->label('Semester')
+                            ->minValue(1)
+                            ->maxValue(2)
+                            ->numeric()
+                            ->required(),
+                        Forms\Components\TextInput::make('academic_year')
+                            ->label('Tahun Akademik')
+                            ->default(date('Y'))
+                            ->minLength(4)
+                            ->maxLength(4)
+                            ->numeric()
+                            ->required(),
                     ])
                     ->modalSubmitActionLabel('Tambahkan')
                     ->action(function (array $data) {
@@ -81,6 +95,8 @@ class EditCourse extends EditRecord
                                 \App\Models\StudentCourse::create([
                                     'user_id' => $userId,
                                     'course_id' => $this->record->id,
+                                    'semester' => $data['semester'],
+                                    'academic_year' => $data['academic_year'],
                                 ]);
                             }
 
