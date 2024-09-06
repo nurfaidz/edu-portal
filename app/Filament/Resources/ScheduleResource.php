@@ -42,6 +42,12 @@ class ScheduleResource extends Resource
                 Tables\Columns\TextColumn::make('course.name')
                     ->label('Mata Kuliah')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('semester')
+                    ->label('Semester')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('academic_year')
+                    ->label('Tahun Akademik')
+                    ->searchable(),
             ])
             ->filters([
                 //

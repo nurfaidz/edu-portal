@@ -24,6 +24,7 @@ class LecturerCoursesRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\Section::make()
+                    ->columns(2)
                     ->schema([
                         Forms\Components\Select::make('course_id')
                             ->label('Mata Kuliah')
@@ -33,6 +34,18 @@ class LecturerCoursesRelationManager extends RelationManager
                                     ->toArray()
                             )
                             ->searchable()
+                            ->required(),
+                        Forms\Components\TextInput::make('semester')
+                            ->label('Semester')
+                            ->minValue(1)
+                            ->numeric()
+                            ->required(),
+                        Forms\Components\TextInput::make('academic_year')
+                            ->label('Tahun Akademik')
+                            ->default(date('Y'))
+                            ->minLength(4)
+                            ->maxLength(4)
+                            ->numeric()
                             ->required(),
                     ]),
             ]);
@@ -48,21 +61,46 @@ class LecturerCoursesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('course.code')
                     ->label('Kode')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('course.credits')
-                    ->label('SKS'),
-                Tables\Columns\TextColumn::make('course.semester')
+                Tables\Columns\TextColumn::make('semester')
                     ->label('Semester'),
-                Tables\Columns\TextColumn::make('course.type')
-                    ->label('Tipe')
-                    ->formatStateUsing(function ($record) {
-                        return match ($record->course->type) {
-                            Type::Mandatory->value => 'Wajib',
-                            Type::Elective->value => 'Pilihan',
-                        };
-                    }),
+                Tables\Columns\TextColumn::make('academic_year')
+                    ->label('Tahun Akademik'),
+//                Tables\Columns\TextColumn::make('course.credits')
+//                    ->label('SKS'),
+//                Tables\Columns\TextColumn::make('course.semester')
+//                    ->label('Semester'),
+//                Tables\Columns\TextColumn::make('course.type')
+//                    ->label('Tipe')
+//                    ->formatStateUsing(function ($record) {
+//                        return match ($record->course->type) {
+//                            Type::Mandatory->value => 'Wajib',
+//                            Type::Elective->value => 'Pilihan',
+//                        };
+//                    }),
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('filterStudent')
+                    ->form([
+                        Forms\Components\TextInput::make('semester')
+                            ->label('Semester')
+                            ->minValue(1)
+                            ->numeric()
+                            ->required(),
+                        Forms\Components\TextInput::make('academic_year')
+                            ->label('Tahun Akademik')
+                            ->default(date('Y'))
+                            ->minLength(4)
+                            ->maxLength(4)
+                            ->numeric()
+                            ->required(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (isset($data['semester']) && isset($data['academic_year'])) {
+                            return $query->where('semester', $data['semester'])
+                                ->where('academic_year', $data['academic_year']);
+                        }
+                        return $query;
+                    }),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()

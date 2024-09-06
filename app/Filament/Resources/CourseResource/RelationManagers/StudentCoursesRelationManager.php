@@ -48,7 +48,6 @@ class StudentCoursesRelationManager extends RelationManager
                         Forms\Components\TextInput::make('semester')
                             ->label('Semester')
                             ->minValue(1)
-                            ->maxValue(2)
                             ->numeric()
                             ->required(),
                         Forms\Components\TextInput::make('academic_year')
