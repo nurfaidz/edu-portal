@@ -1,21 +1,22 @@
 <?php
 
-namespace App\Filament\Resources\AttendanceSummaryResource\Pages;
+namespace App\Filament\Resources\AdminLecturerAttendanceSummaryResource\Pages;
 
-use App\Filament\Resources\AttendanceSummaryResource;
+use App\Enums\Courses\Type;
+use App\Filament\Resources\AdminLecturerAttendanceSummaryResource;
 use Filament\Actions;
 use Filament\Infolists\Infolist;
 use Filament\Infolists;
 use Filament\Resources\Pages\ViewRecord;
 
-class ViewAttendanceSummary extends ViewRecord
+class ViewAdminLecturerAttendanceSummary extends ViewRecord
 {
-    protected static string $resource = AttendanceSummaryResource::class;
+    protected static string $resource = AdminLecturerAttendanceSummaryResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            // Actions\EditAction::make(),
+            //
         ];
     }
 
@@ -24,13 +25,20 @@ class ViewAttendanceSummary extends ViewRecord
         return $infolist
             ->schema([
                 Infolists\Components\Section::make('Informasi Dosen')
-                    ->columns(2)
                     ->schema([
                         Infolists\Components\TextEntry::make('npp')
-                            ->label('NPP'),
+                            ->label('NIP'),
                         Infolists\Components\TextEntry::make('name')
                             ->label('Nama Dosen'),
                     ])
+                    ->columns(2),
             ]);
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            AdminLecturerAttendanceSummaryResource\Widgets\AbsentOverview::make(),
+        ];
     }
 }

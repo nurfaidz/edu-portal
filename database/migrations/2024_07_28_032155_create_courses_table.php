@@ -18,9 +18,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->integer('credits'); // Jumlah SKS
             $table->string('type'); // Wajib, Pilihan
-            $table->integer('quota')->nullable(); // Kuota
-            $table->string('semester');
-            $table->year('year')->nullable();
+            $table->tinyInteger('semester');
             $table->softDeletes();
             $table->timestamps();
         });
