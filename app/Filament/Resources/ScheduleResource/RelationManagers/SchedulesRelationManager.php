@@ -41,7 +41,20 @@ class SchedulesRelationManager extends RelationManager
                     ->label('Ruang Kelas'),
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('filterSchedule')
+                    ->form([
+                        Forms\Components\Select::make('classroom')
+                            ->label('Ruang Kelas')
+                            ->searchable()
+                            ->options([
+                                \App\Enums\Courses\Classroom::A->value => 'Kelas A',
+                                \App\Enums\Courses\Classroom::B->value => 'Kelas B',
+                            ]),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when($data['classroom'], fn($query, $classroom) => $query->where('classroom', $classroom));
+                    }),
             ])
             ->headerActions([
                 //

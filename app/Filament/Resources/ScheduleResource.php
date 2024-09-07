@@ -70,7 +70,6 @@ class ScheduleResource extends Resource
                             ->numeric(),
                         Forms\Components\TextInput::make('academic_year')
                             ->label('Tahun Akademik')
-//                            ->default(date('Y'))
                             ->minLength(4)
                             ->maxLength(4)
                             ->numeric(),
