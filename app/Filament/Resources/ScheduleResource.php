@@ -50,7 +50,46 @@ class ScheduleResource extends Resource
                     ->searchable(),
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('filterSchedule')
+                    ->form([
+                        Forms\Components\Select::make('lecturer_id')
+                            ->label('Dosen')
+                            ->searchable()
+                            ->options(function () {
+                                return \App\Models\Lecturer::pluck('name', 'user_id');
+                            }),
+                        Forms\Components\Select::make('course_id')
+                            ->label('Mata Kuliah')
+                            ->searchable()
+                            ->options(function () {
+                                return \App\Models\Course::pluck('name', 'id');
+                            }),
+                        Forms\Components\TextInput::make('semester')
+                            ->label('Semester')
+                            ->minValue(1)
+                            ->numeric(),
+                        Forms\Components\TextInput::make('academic_year')
+                            ->label('Tahun Akademik')
+//                            ->default(date('Y'))
+                            ->minLength(4)
+                            ->maxLength(4)
+                            ->numeric(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(isset($data['lecturer_id']), function ($query) use ($data) {
+                                return $query->where('user_id', $data['lecturer_id']);
+                            })
+                            ->when(isset($data['course_id']), function ($query) use ($data) {
+                                return $query->where('course_id', $data['course_id']);
+                            })
+                            ->when(isset($data['semester']), function ($query) use ($data) {
+                                return $query->where('semester', $data['semester']);
+                            })
+                            ->when(isset($data['academic_year']), function ($query) use ($data) {
+                                return $query->where('academic_year', $data['academic_year']);
+                            });
+                    })
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

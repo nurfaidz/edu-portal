@@ -107,6 +107,8 @@ class ViewSchedule extends ViewRecord
                                     'date' => $start->copy()->addWeek($i)->format('Y-m-d'),
                                     'start' => $start_time,
                                     'end' => $end_time,
+                                    'semester' => $this->record->semester,
+                                    'academic_year' => $this->record->academic_year,
                                 ]);
 
                                 $expired_at = $start->copy()->addWeek($i)->addMinutes(20)->format('Y-m-d H:i:s');
@@ -206,6 +208,8 @@ class ViewSchedule extends ViewRecord
                                     'date' => $start->copy()->addWeek($i)->format('Y-m-d'),
                                     'start' => $start_time,
                                     'end' => $end_time,
+                                    'semester' => $this->record->semester,
+                                    'academic_year' => $this->record->academic_year,
                                 ]);
 
                                 $expired_at = $start->copy()->addWeek($i)->addMinutes(20)->format('Y-m-d H:i:s');
@@ -275,6 +279,10 @@ class ViewSchedule extends ViewRecord
                                     return 'Mata Kuliah Pilihan';
                                 }
                             }),
+                        Infolists\Components\TextEntry::make('semester')
+                            ->label('Semester'),
+                        Infolists\Components\TextEntry::make('academic_year')
+                            ->label('Tahun Akademik'),
                     ])
                     ->columns(2),
             ]);
