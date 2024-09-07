@@ -6,7 +6,7 @@ use App\Models\LecturerCourse;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
-class AbsentOverview extends BaseWidget
+class AttendanceOverview extends BaseWidget
 {
     public $record;
 
@@ -26,9 +26,11 @@ class AbsentOverview extends BaseWidget
         // Reschedule
         $reschedule = $queryChangeSchedules->where('is_reschedule', true)->count();
 
-        return [Stat::make('Tidak Hadir:', $absent+$pending),
+        return [
+            Stat::make('Tidak Hadir:', $absent + $pending),
             Stat::make('Hadir:', $present),
             Stat::make('Izin:', $excused),
-            Stat::make('Reschedule:', $reschedule),];
+            Stat::make('Reschedule:', $reschedule),
+        ];
     }
 }

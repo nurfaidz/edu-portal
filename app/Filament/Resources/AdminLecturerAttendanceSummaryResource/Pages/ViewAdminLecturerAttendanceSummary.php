@@ -38,7 +38,7 @@ class ViewAdminLecturerAttendanceSummary extends ViewRecord
     protected function getHeaderWidgets(): array
     {
         return [
-            AdminLecturerAttendanceSummaryResource\Widgets\AbsentOverview::make(),
+            AdminLecturerAttendanceSummaryResource\Widgets\AttendanceOverview::make(),
         ];
     }
 }

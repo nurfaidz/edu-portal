@@ -66,13 +66,15 @@ class AttendanceLecturerResource extends Resource
                             ]),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-                        if (isset($data['course_id'])) {
-                            return $query->whereHas('lecturerCourse', function ($query) use ($data) {
-                                $query->where('user_id', auth()->id())->where('course_id', $data['course_id']);
-                            })
-                            ->where('classroom', $data['classroom']);
-                        }
-                        return $query;
+                        return $query->whereHas('lecturerCourse', function ($query) use ($data) {
+                            $query->where('user_id', auth()->id())
+                                ->when(isset($data['course_id']), function ($query) use ($data) {
+                                    $query->where('course_id', $data['course_id']);
+                                });
+                        })
+                        ->when(isset($data['classroom']), function ($query) use ($data) {
+                            $query->where('classroom', $data['classroom']);
+                        });
                     })
             ])
             ->deferLoading()

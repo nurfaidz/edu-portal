@@ -45,7 +45,6 @@ class ViewLecturerCourse extends ViewRecord
                         ])
                 ])
                 ->action(function (array $data, $record) {
-
                     try {
                         $date = \Carbon\Carbon::parse($record->date);
                         $start = \Carbon\Carbon::parse($record->start);
@@ -196,7 +195,7 @@ class ViewLecturerCourse extends ViewRecord
                             ->success()
                             ->send();
 
-                        return;
+                        return redirect()->route('filament.admin.resources.lecturer-reschedules.index');
 
                     } catch (\Exception $e) {
                         Notification::make()
@@ -221,6 +220,10 @@ class ViewLecturerCourse extends ViewRecord
                     ->schema([
                         Infolists\Components\TextEntry::make('lecturerCourse.course.name')
                             ->label('Mata Kuliah'),
+                        Infolists\Components\TextEntry::make('semester')
+                            ->label('Semester'),
+                        Infolists\Components\TextEntry::make('academic_year')
+                            ->label('Tahun Akademik'),
                         Infolists\Components\TextEntry::make('date')
                             ->label('Tanggal Pembelajaran')
                             ->formatStateUsing(fn($record) => \Carbon\Carbon::parse($record->date)->locale('id')->isoFormat('dddd, D MMMM Y')),
