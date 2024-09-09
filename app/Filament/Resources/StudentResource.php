@@ -6,8 +6,11 @@ use App\Enums\Roles\Role;
 use App\Filament\Resources\StudentResource\Pages;
 use App\Filament\Resources\StudentResource\RelationManagers;
 use App\Models\Student;
-use App\Models\User;
+use Filament\Actions;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms;
+use Filament\Notifications\Notification;
+use App\Models\User;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -75,6 +78,35 @@ class StudentResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                Tables\Actions\Action::make('importStudent')
+                    ->label('Import Mahasiswa')
+                    ->icon('heroicon-m-document-arrow-up')
+                    ->modalHeading('Import Mahasiswa')
+                    ->color('info')
+                    ->form([
+                        Forms\Components\SpatieMediaLibraryFileUpload::make('file')
+                            ->collection('file-import')
+                            ->label('File Excel 1')
+//                            ->rules('mimes:xlsx,xls')
+                            ->required(),
+                    ])
+                    ->action(function (array $data) {
+                        dd($data);
+                        $file = $data['file']->getPath();
+                        try {
+
+                        } catch (\Exception $e) {
+                            Notification::make()
+                                ->title('Gagal Import Mahasiswa')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
