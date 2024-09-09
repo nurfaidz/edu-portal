@@ -25,6 +25,11 @@ Route::middleware([])->name('api.')->group(function () {
     });
 
     Route::middleware('auth:sanctum')->prefix('mobile')->name('mobile.')->group(function () {
+        // Get weekly schedule
         Route::get('schedule', [Api\ScheduleController::class, 'getWeeklySchedule']);
+
+        // Get Attendance List Today
+        Route::get('attendance', [Api\AttendanceController::class, 'getAttendanceListToday']);
+
     });
 });
