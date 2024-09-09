@@ -20,6 +20,11 @@ class Student extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
+    }
+
     public function getNimNameAttribute()
     {
         return "{$this->nim} - {$this->name}";
