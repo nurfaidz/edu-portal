@@ -37,6 +37,8 @@ class ViewStudent extends ViewRecord
                                     ->label('Nama Mahasiswa'),
                                 Infolists\Components\TextEntry::make('nim')
                                     ->label('Nomor Induk Mahasiswa'),
+                                Infolists\Components\TextEntry::make('class')
+                                    ->label('Ruang Kelas'),
                             ]),
                     ])
             ]);

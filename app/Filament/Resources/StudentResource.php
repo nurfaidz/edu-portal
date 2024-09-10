@@ -52,6 +52,13 @@ class StudentResource extends Resource
                             Forms\Components\TextInput::make('nim')
                                 ->label('Nomor Induk Mahasiswa')
                                 ->required(),
+                            Forms\Components\Select::make('class')
+                                ->label('Ruang Kelas')
+                                ->required()
+                                ->options([
+                                    \App\Enums\Courses\Classroom::A->value => 'A',
+                                    \App\Enums\Courses\Classroom::B->value => 'B',
+                                ])
                         ]),
                     Forms\Components\TextInput::make('password')
                         ->label('Password')

@@ -13,6 +13,7 @@ class Student extends Model
     protected $fillable = [
         'name',
         'nim',
+        'class',
     ];
 
     public function user()
