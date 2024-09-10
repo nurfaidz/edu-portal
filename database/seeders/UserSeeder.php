@@ -64,9 +64,9 @@ class UserSeeder extends Seeder
 
         // Student
         $students = [
-            ['name' => 'ST01', 'student_name' => 'Student 01', 'email' => 'student01@example.com'],
-            ['name' => 'ST02', 'student_name' => 'Student 02', 'email' => 'student02@example.com'],
-            ['name' => 'ST03', 'student_name' => 'Student 03', 'email' => 'student03@example.com']
+            ['name' => 'ST01', 'student_name' => 'Student 01', 'email' => 'student01@example.com', 'class' => 'A'],
+            ['name' => 'ST02', 'student_name' => 'Student 02', 'email' => 'student02@example.com', 'class' => 'B'],
+            ['name' => 'ST03', 'student_name' => 'Student 03', 'email' => 'student03@example.com', 'class' => 'A'],
         ];
 
         $roleStudent = Role::where('name', RolesRole::Student->value)->first();
@@ -80,6 +80,7 @@ class UserSeeder extends Seeder
             $studentUser->studentProfile()->create([
                 'name' => $studentData['student_name'],
                 'nim' => $studentData['name'],
+                'class' => $studentData['class'],
             ]);
 
             $studentUser->assignRole($roleStudent);

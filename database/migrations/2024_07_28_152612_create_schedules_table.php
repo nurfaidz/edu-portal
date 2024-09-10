@@ -21,6 +21,7 @@ return new class extends Migration
             $table->json('extras')->nullable();
             $table->boolean('is_reschedule')->default(false);
             $table->text('reschedule_note')->nullable();
+            $table->string('class');
             $table->tinyInteger('semester');
             $table->year('academic_year');
             $table->timestamps();

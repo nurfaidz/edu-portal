@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\User::class)->index();
             $table->string('name');
             $table->string('nim')->unique();
+            $table->string('class');
             $table->softDeletes();
             $table->timestamps();
         });

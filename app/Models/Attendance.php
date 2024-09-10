@@ -46,11 +46,11 @@ class Attendance extends Model
 
     public function lecturer()
     {
-        return $this->belongsTo(User::class, 'lecturer_id');
+        return $this->belongsTo(User::class, 'attendable_id')->where('attendable_type', '\App\Models\Lecturer');
     }
 
     public function student()
     {
-        return $this->belongsTo(User::class, 'attendable_id');
+        return $this->belongsTo(User::class, 'attendable_id')->where('attendable_type', '\App\Models\Student');
     }
 }

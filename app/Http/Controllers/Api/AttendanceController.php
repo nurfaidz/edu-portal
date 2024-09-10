@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AttendanceJsonResource;
 use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
@@ -21,9 +22,11 @@ class AttendanceController extends Controller
                         ->where('academic_year', now()->year)
                         ->where('semester', $lastestSemester);
                 })->whereDate('date', now());
-            })->get();
+            })
+                ->where('attendable_id', $user->id)
+                ->get();
 
-            return response()->apiSuccess($attendances);
+            return response()->apiSuccess(AttendanceJsonResource::collection($attendances));
         } catch (\Exception $e) {
             return response()->apiError(
                 500,
@@ -46,9 +49,9 @@ class AttendanceController extends Controller
                         ->where('academic_year', now()->year)
                         ->where('semester', $lastestSemester);
                 });
-            })->get();
+            })->where('attendable_id', $user->id)->get();
 
-            return response()->apiSuccess($attendances);
+            return response()->apiSuccess(AttendanceJsonResource::collection($attendances));
         } catch (\Exception $e) {
             return response()->apiError(
                 500,
