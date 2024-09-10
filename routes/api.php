@@ -31,5 +31,8 @@ Route::middleware([])->name('api.')->group(function () {
         // Get Attendance List Today
         Route::get('attendance', [Api\AttendanceController::class, 'getAttendanceListToday']);
 
+        // Get All Attendance List
+        Route::get('attendance/all', [Api\AttendanceController::class, 'getAllAttendanceList']);
+
     });
 });

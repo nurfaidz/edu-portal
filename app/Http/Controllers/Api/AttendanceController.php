@@ -31,4 +31,29 @@ class AttendanceController extends Controller
             );
         }
     }
+
+    public function getAllAttendanceList()
+    {
+        try {
+            $user = auth()->user();
+
+            $studentCourses = $user->studentCourses;
+            $lastestSemester = $studentCourses->where('academic_year', now()->year)->max('semester');
+
+            $attendances = \App\Models\Attendance::whereHas('schedule', function ($query) use ($studentCourses, $lastestSemester) {
+                $query->whereHas('lecturerCourse', function ($query) use ($studentCourses, $lastestSemester) {
+                    $query->whereIn('course_id', $studentCourses->pluck('course_id'))
+                        ->where('academic_year', now()->year)
+                        ->where('semester', $lastestSemester);
+                });
+            })->get();
+
+            return response()->apiSuccess($attendances);
+        } catch (\Exception $e) {
+            return response()->apiError(
+                500,
+                $e->getMessage(),
+            );
+        }
+    }
 }
