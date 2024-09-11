@@ -47,7 +47,7 @@ class ViewSchedule extends ViewRecord
                         }
 
                         foreach ($schedules as $schedule) {
-                            $schedule->attendance()->delete();
+                            $schedule->attendances()->delete();
                             $schedule->delete();
                         }
 
@@ -60,7 +60,7 @@ class ViewSchedule extends ViewRecord
                     } catch (\Exception $e) {
                         Notification::make()
                             ->title('Gagal menghapus')
-                            ->body('Terjadi kesalahan saat menghapus jadwal')
+                            ->body($e->getMessage())
                             ->danger()
                             ->send();
 
@@ -294,7 +294,7 @@ class ViewSchedule extends ViewRecord
                         }
 
                         foreach ($schedules as $schedule) {
-                            $schedule->attendance()->delete();
+                            $schedule->attendances()->delete();
                             $schedule->delete();
                         }
 

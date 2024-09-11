@@ -35,6 +35,9 @@ class StudentCoursesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('student.studentProfile.nim')
                     ->label('NIM')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('student.studentProfile.class')
+                    ->label('Kelas')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('semester')
                     ->label('Semester')
                     ->searchable(),

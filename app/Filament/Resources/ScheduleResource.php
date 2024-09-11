@@ -68,11 +68,6 @@ class ScheduleResource extends Resource
                             ->label('Semester')
                             ->minValue(1)
                             ->numeric(),
-                        Forms\Components\TextInput::make('academic_year')
-                            ->label('Tahun Akademik')
-                            ->minLength(4)
-                            ->maxLength(4)
-                            ->numeric(),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -84,9 +79,6 @@ class ScheduleResource extends Resource
                             })
                             ->when(isset($data['semester']), function ($query) use ($data) {
                                 return $query->where('semester', $data['semester']);
-                            })
-                            ->when(isset($data['academic_year']), function ($query) use ($data) {
-                                return $query->where('academic_year', $data['academic_year']);
                             });
                     })
             ])
@@ -116,5 +108,10 @@ class ScheduleResource extends Resource
     public static function canAccess(): bool
     {
         return auth()->user()->role === Role::Superadmin->value;
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('academic_year', date('Y'));
     }
 }
