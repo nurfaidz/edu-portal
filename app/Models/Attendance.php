@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Spatie\ModelStates\HasStates;
 
 class Attendance extends Model
@@ -49,8 +50,8 @@ class Attendance extends Model
         return $this->belongsTo(User::class, 'attendable_id')->where('attendable_type', '\App\Models\Lecturer');
     }
 
-    public function student()
+    public function student(): MorphTo
     {
-        return $this->belongsTo(User::class, 'attendable_id')->where('attendable_type', '\App\Models\Student');
+        return $this->morphTo();
     }
 }

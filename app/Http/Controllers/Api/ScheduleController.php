@@ -12,6 +12,7 @@ class ScheduleController extends Controller
         try {
             $user = auth()->user();
 
+            $studentClass = $user->studentProfile->class;
             $studentCourses = $user->studentCourses;
             $lastestSemester = $studentCourses->where('academic_year', now()->year)->max('semester');
 
@@ -22,7 +23,9 @@ class ScheduleController extends Controller
                 $query->whereIn('course_id', $studentCourses->pluck('course_id'))
                     ->where('academic_year', now()->year)
                     ->where('semester', $lastestSemester);
-            })->whereBetween('date', [$startOfWeek, $endOfWeek])->get();
+            })
+                ->where('class', $studentClass)
+                ->whereBetween('date', [$startOfWeek, $endOfWeek])->get();
 
             return response()->apiSuccess($schedules);
         } catch (\Exception $e) {

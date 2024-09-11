@@ -18,7 +18,7 @@ class AttendanceJsonResource extends JsonResource
             'id' => $this->id,
             'schedule_id' => $this->schedule->id,
             'attendable_type' => $this->attendable_type,
-            'attendable_id' => $this->student->id,
+            'attendable_id' => $this->attendable_id,
             'status' => $this->status,
             'note' => $this->note,
             'checkin_at' => $this->checkin_at,
