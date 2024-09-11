@@ -109,6 +109,7 @@ class ViewSchedule extends ViewRecord
                                     'date' => $start->copy()->addWeek($i)->format('Y-m-d'),
                                     'start' => $start_time,
                                     'end' => $end_time,
+                                    'class' => $classroom,
                                     'semester' => $this->record->semester,
                                     'academic_year' => $this->record->academic_year,
                                 ]);
@@ -193,6 +194,7 @@ class ViewSchedule extends ViewRecord
                                     'date' => $start->copy()->addWeek($i)->format('Y-m-d'),
                                     'start' => $start_time,
                                     'end' => $end_time,
+                                    'class' => $classroom,
                                     'semester' => $this->record->semester,
                                     'academic_year' => $this->record->academic_year,
                                 ]);
@@ -305,6 +307,7 @@ class ViewSchedule extends ViewRecord
                                     'date' => $start->copy()->addWeek($i)->format('Y-m-d'),
                                     'start' => $start_time,
                                     'end' => $end_time,
+                                    'class' => $classroom,
                                     'semester' => $this->record->semester,
                                     'academic_year' => $this->record->academic_year,
                                 ]);

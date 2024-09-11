@@ -72,12 +72,6 @@ class EditCourse extends EditRecord
                             })
                             ->multiple()
                             ->required(),
-                        Forms\Components\TextInput::make('semester')
-                            ->label('Semester')
-                            ->minValue(1)
-                            ->maxValue(2)
-                            ->numeric()
-                            ->required(),
                         Forms\Components\TextInput::make('academic_year')
                             ->label('Tahun Akademik')
                             ->default(date('Y'))
@@ -95,7 +89,7 @@ class EditCourse extends EditRecord
                                 \App\Models\StudentCourse::create([
                                     'user_id' => $userId,
                                     'course_id' => $this->record->id,
-                                    'semester' => $data['semester'],
+                                    'semester' => $this->record->semester,
                                     'academic_year' => $data['academic_year'],
                                 ]);
                             }
@@ -111,7 +105,7 @@ class EditCourse extends EditRecord
                         } catch (\Exception $e) {
                             Notification::make()
                             ->title('Gagal menambahkan')
-                            ->body('Terjadi kesalahan saat menambahkan mahasiswa ke mata kuliah ini')
+                            ->body($e->getMessage())
                             ->danger()
                             ->send();
 
