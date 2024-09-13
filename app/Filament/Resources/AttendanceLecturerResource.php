@@ -103,10 +103,7 @@ class AttendanceLecturerResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $lastSemester = \App\Models\Schedule::select('semester')
-            ->orderBy('semester', 'desc')
-            ->first()
-            ->semester;
+        $lastSemester = \App\Models\Schedule::lastSemester();
 
         return parent::getEloquentQuery()
             ->whereHas('lecturerCourse', function ($query) {
