@@ -11,14 +11,19 @@ class AttendanceOverview extends BaseWidget
 {
     protected function getStats(): array
     {
+        $lastSemester = Schedule::lastSemester();
+
         $query = Schedule::whereHas('lecturerCourse', function ($query) {
             $query->where('user_id', auth()->id());
-        })->get();
+        })
+            ->where('semester', $lastSemester)
+            ->where('academic_year', now()->year)
+            ->get();
 
         $allAttendance = new Collection();
 
         foreach ($query as $schedule) {
-            $allAttendance = $allAttendance->merge($schedule->attendances);
+            $allAttendance = $allAttendance->merge($schedule->attendances->where('attendable_type', '\App\Models\Lecturer')->where('attendable_id', auth()->id()));
         }
 
         // Attendances

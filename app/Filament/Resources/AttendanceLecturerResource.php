@@ -103,9 +103,17 @@ class AttendanceLecturerResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->whereHas('lecturerCourse', function ($query) {
-            $query->where('user_id', auth()->id());
-        });
+        $lastSemester = \App\Models\Schedule::select('semester')
+            ->orderBy('semester', 'desc')
+            ->first()
+            ->semester;
+
+        return parent::getEloquentQuery()
+            ->whereHas('lecturerCourse', function ($query) {
+                $query->where('user_id', auth()->id());
+            })
+            ->where('semester', $lastSemester)
+            ->where('academic_year', now()->year);
     }
 
     public static function canAccess(): bool

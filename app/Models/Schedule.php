@@ -40,4 +40,9 @@ class Schedule extends Model implements HasMedia
     {
         return $query->where('is_reschedule', true);
     }
+
+    public static function scopeLastSemester($query)
+    {
+        return $query->select('semester')->orderBy('semester', 'desc')->first()->semester;
+    }
 }
