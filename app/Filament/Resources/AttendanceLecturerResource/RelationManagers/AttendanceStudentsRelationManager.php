@@ -31,20 +31,20 @@ class AttendanceStudentsRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('student.studentProfile.nim')
-                ->label('NIM')
-                ->searchable(),
-            Tables\Columns\TextColumn::make('student.studentProfile.name')
-                ->label('Nama Mahasiswa')
-                ->searchable(),
-            Tables\Columns\TextColumn::make('status')
-                ->label('Status Kehadiran')
-                ->badge()
-                ->color(fn (string $state): string => match ($state) {
-                    \App\States\AttendanceStatus\Present::$name => 'success',
-                    \App\States\AttendanceStatus\Absent::$name => 'danger',
-                    \App\States\AttendanceStatus\Excused::$name => 'warning',
-                    \App\States\AttendanceStatus\Pending::$name => 'gray'
-                }),
+                    ->label('NIM')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('student.studentProfile.name')
+                    ->label('Nama Mahasiswa')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status Kehadiran')
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        \App\States\AttendanceStatus\Present::$name => 'success',
+                        \App\States\AttendanceStatus\Absent::$name => 'danger',
+                        \App\States\AttendanceStatus\Excused::$name => 'warning',
+                        \App\States\AttendanceStatus\Pending::$name => 'gray'
+                    }),
             ])
             ->filters([
                 //

@@ -123,9 +123,19 @@ class ViewSchedule extends ViewRecord
                                     'expired_at' => $expired_at,
                                 ]);
 
-                                foreach ($this->record->course->studentCourses as $studentCourse) {
+                                $students = \App\Models\StudentCourse::whereHas('student', function ($query) use ($classroom) {
+                                    $query->whereHas('studentProfile', function ($query) use ($classroom) {
+                                        $query->where('class', $classroom);
+                                    });
+                                })
+                                    ->where('course_id', $this->record->course_id)
+                                    ->where('semester', $this->record->semester)
+                                    ->where('academic_year', $this->record->academic_year)
+                                    ->get();
+
+                                foreach ($students as $student) {
                                     \App\Models\Attendance::create([
-                                        'attendable_id' => $studentCourse->student->id,
+                                        'attendable_id' => $student->user_id,
                                         'attendable_type' => '\App\Models\Student',
                                         'schedule_id' => $schedule->id,
                                         'expired_at' => $expired_at,
@@ -208,9 +218,19 @@ class ViewSchedule extends ViewRecord
                                     'expired_at' => $expired_at,
                                 ]);
 
-                                foreach ($this->record->course->studentCourses as $studentCourse) {
+                                $students = \App\Models\StudentCourse::whereHas('student', function ($query) use ($classroom) {
+                                    $query->whereHas('studentProfile', function ($query) use ($classroom) {
+                                        $query->where('class', $classroom);
+                                    });
+                                })
+                                    ->where('course_id', $this->record->course_id)
+                                    ->where('semester', $this->record->semester)
+                                    ->where('academic_year', $this->record->academic_year)
+                                    ->get();
+
+                                foreach ($students as $student) {
                                     \App\Models\Attendance::create([
-                                        'attendable_id' => $studentCourse->student->id,
+                                        'attendable_id' => $student->user_id,
                                         'attendable_type' => '\App\Models\Student',
                                         'schedule_id' => $schedule->id,
                                         'expired_at' => $expired_at,
@@ -321,9 +341,19 @@ class ViewSchedule extends ViewRecord
                                     'expired_at' => $expired_at,
                                 ]);
 
-                                foreach ($this->record->course->studentCourses as $studentCourse) {
+                                $students = \App\Models\StudentCourse::whereHas('student', function ($query) use ($classroom) {
+                                    $query->whereHas('studentProfile', function ($query) use ($classroom) {
+                                        $query->where('class', $classroom);
+                                    });
+                                })
+                                    ->where('course_id', $this->record->course_id)
+                                    ->where('semester', $this->record->semester)
+                                    ->where('academic_year', $this->record->academic_year)
+                                    ->get();
+
+                                foreach ($students as $student) {
                                     \App\Models\Attendance::create([
-                                        'attendable_id' => $studentCourse->student->id,
+                                        'attendable_id' => $student->user_id,
                                         'attendable_type' => '\App\Models\Student',
                                         'schedule_id' => $schedule->id,
                                         'expired_at' => $expired_at,
