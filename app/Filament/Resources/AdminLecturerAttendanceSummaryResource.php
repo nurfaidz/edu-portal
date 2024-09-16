@@ -57,7 +57,8 @@ class AdminLecturerAttendanceSummaryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\LecturerCourseRelationManager::make(),
+            RelationManagers\AttendancesRelationManager::make(),
         ];
     }
 

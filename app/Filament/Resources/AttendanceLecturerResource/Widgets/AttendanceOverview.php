@@ -11,12 +11,10 @@ class AttendanceOverview extends BaseWidget
 {
     protected function getStats(): array
     {
-        $lastSemester = Schedule::lastSemester();
 
         $query = Schedule::whereHas('lecturerCourse', function ($query) {
             $query->where('user_id', auth()->id());
         })
-            ->where('semester', $lastSemester)
             ->where('academic_year', now()->year)
             ->get();
 
