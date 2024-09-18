@@ -9,20 +9,11 @@ class LecturerSalary extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'schedule_id',
-        'amount',
-    ];
+    protected $guarded = [];
 
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function schedule()
-    {
-        return $this->belongsTo(Schedule::class);
     }
 
     public function getAmountAttribute($value)

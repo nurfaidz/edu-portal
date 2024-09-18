@@ -96,6 +96,11 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasOne(Lecturer::class);
     }
 
+    public function lecturerSalary()
+    {
+        return $this->hasOne(LecturerSalary::class);
+    }
+
     public function lecturerCourses()
     {
         return $this->hasMany(LecturerCourse::class, 'user_id');

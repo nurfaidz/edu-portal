@@ -15,17 +15,17 @@ class PayrollSetting extends SettingsPage
 
     protected static string $settings = PayrollLecturer::class;
 
-    protected static ?string $title = 'Gaji';
+    protected static ?string $title = 'Setting Upah';
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Setting Gaji')
+                Forms\Components\Section::make('Setting Upah')
                     ->schema([
                     Forms\Components\TextInput::make('amount')
-                        ->label('Gaji Dosen')
-                        ->helperText('Gaji dosen per pertemuan')
+                        ->label('Upah Dosen')
+                        ->helperText('Upah dosen per pertemuan')
                         ->minValue(0)
                         ->numeric()
                         ->required(),

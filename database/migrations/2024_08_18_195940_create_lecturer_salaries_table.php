@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('lecturer_salaries', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\User::class)->index();
-            $table->foreignIdFor(\App\Models\Schedule::class)->index();
             $table->integer('amount');
+            $table->tinyInteger('semester');
+            $table->year('academic_year');
             $table->timestamps();
         });
     }
