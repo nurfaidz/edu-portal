@@ -26,7 +26,7 @@ class StudentsImport implements ToCollection, WithHeadingRow
                     'password' => Hash::make($row['nim']),
                 ]);
 
-                $student = $userStudent->studentProfile()->create([
+                $userStudent->studentProfile()->create([
                     'name' => $row['nama'],
                     'nim' => $row['nim'],
                     'class' => $row['kelas'],
