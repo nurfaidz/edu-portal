@@ -17,6 +17,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentResource extends Resource
 {
@@ -93,17 +95,24 @@ class StudentResource extends Resource
                     ->modalHeading('Import Mahasiswa')
                     ->color('info')
                     ->form([
-                        Forms\Components\SpatieMediaLibraryFileUpload::make('file')
-                            ->collection('file-import')
+                        Forms\Components\FileUpload::make('attachment')
                             ->label('File Excel 1')
-//                            ->rules('mimes:xlsx,xls')
+                            ->rules('mimes:xlsx,xls')
                             ->required(),
                     ])
                     ->action(function (array $data) {
-                        dd($data);
-                        $file = $data['file']->getPath();
                         try {
+                            Excel::import(new \App\Imports\StudentsImport, public_path('storage/' . $data['attachment']));
 
+                            Storage::delete(public_path('storage/' . $data['attachment']));
+
+                            Notification::make()
+                                ->title('Berhasil Import Mahasiswa')
+                                ->body('Data mahasiswa berhasil diimport')
+                                ->success()
+                                ->send();
+
+                            return;
                         } catch (\Exception $e) {
                             Notification::make()
                                 ->title('Gagal Import Mahasiswa')
@@ -120,7 +129,7 @@ class StudentResource extends Resource
                 Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
-                //
+
             ]);
     }
 
