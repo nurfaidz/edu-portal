@@ -12,7 +12,9 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminLecturerAttendanceSummaryResource extends Resource
 {
@@ -44,6 +46,20 @@ class AdminLecturerAttendanceSummaryResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                Tables\Actions\Action::make('exportAttendanceSummary')
+                    ->label('Cetak Rekap Absensi Dosen')
+                    ->icon('heroicon-m-arrow-down-tray')
+                    ->requiresConfirmation()
+                    ->modalSubheading('Cetak rekap absensi dosen dalam format Excel.')
+                    ->color('info')
+                    ->action(function () {
+                        $query = \App\Models\User::lecturer()->get();
+                        $export = new \App\Exports\AttendanceLecturerSummaryExport($query);
+
+                        return Excel::download($export, 'Rekap Absensi Dosen.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+                    }),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

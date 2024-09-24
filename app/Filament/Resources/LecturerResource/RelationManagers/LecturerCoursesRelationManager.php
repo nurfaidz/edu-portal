@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\LecturerResource\RelationManagers;
 
 use App\Enums\Courses\Type;
+use App\Models\Course;
 use App\Models\LecturerCourse;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -106,21 +107,37 @@ class LecturerCoursesRelationManager extends RelationManager
                     ->modalHeading('Tambah Mata Kuliah Dosen')
                     ->action(function (array $data) {
                         try {
-                            // cek apakah mata kuliah sudah ada
+
                             if (LecturerCourse::where('course_id', $data['course_id'])
                                 ->where('user_id', $this->ownerRecord->id)
                                 ->where('academic_year', $data['academic_year'])
                                 ->exists()) {
                                 Notification::make()
                                     ->title('Gagal menambahkan')
-                                    ->body('Mata kuliah dosen pada tahun akademik ini sudah ada')
+                                    ->body('Mata kuliah sudah ada pada tahun akademik yang sama')
                                     ->danger()
                                     ->send();
 
                                 return;
                             }
 
+                            $lecturerCourses = LecturerCourse::where('user_id', $this->ownerRecord->id)
+                                ->where('academic_year', $data['academic_year'])->get();
+
                             $course = \App\Models\Course::find($data['course_id']);
+
+                            foreach ($lecturerCourses as $lecturerCourse) {
+                                if ($lecturerCourse->course->semester == $course->semester) {
+                                    Notification::make()
+                                        ->title('Gagal menambahkan')
+                                        ->body('Minimal satu mata kuliah dosen pada semester dan tahun akademik yang sama')
+                                        ->danger()
+                                        ->send();
+
+                                    return;
+                                }
+                            }
+
                             LecturerCourse::create([
                                 'user_id' => $this->ownerRecord->id,
                                 'course_id' => $course->id,
