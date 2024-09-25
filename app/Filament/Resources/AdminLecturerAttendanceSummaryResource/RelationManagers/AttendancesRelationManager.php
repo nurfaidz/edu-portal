@@ -34,8 +34,18 @@ class AttendancesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('title')
             ->modifyQueryUsing(function (Builder $query) {
-                return $query->whereHas('schedule', function ($query) {
-                    $query->where('academic_year', now()->year);
+                $oddDateStart = date('Y') . '-02-01';
+                $oddDateEnd = date('Y') . '-08-31';
+                $evenDateStart = date('Y') . '-09-01';
+                $evenDateEnd = date('Y') . '-12-31';
+                $now = date('Y-m-d');
+
+                return $query->whereHas('schedule', function ($query) use ($oddDateStart, $oddDateEnd, $evenDateStart, $evenDateEnd, $now) {
+                    if ($now >= $oddDateStart && $now <= $oddDateEnd) {
+                        $query->whereRaw('MOD(semester, 2) <> 0')->where('academic_year', now()->year);
+                    } elseif ($now >= $evenDateStart && $now <= $evenDateEnd) {
+                        $query->whereRaw('MOD(semester, 2) = 0')->where('academic_year', now()->year);
+                    }
                 });
             })
             ->columns([
