@@ -31,8 +31,23 @@ class LecturerCourseRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('title')
             ->modifyQueryUsing(function (Builder $query) {
-                return $query
-                    ->where('academic_year', now()->year);
+                $oddDateStart = date('Y') . '-02-01';
+                $oddDateEnd = date('Y') . '-08-31';
+                $evenDateStart = date('Y') . '-09-01';
+                $evenDateEnd = date('Y') . '-12-31';
+                $now = date('Y-m-d');
+
+                if ($now >= $oddDateStart && $now <= $oddDateEnd) {
+                    return $query->where(function ($query) {
+                        $query->whereRaw('MOD(semester, 2) <> 0');
+                    });
+                } elseif ($now >= $evenDateStart && $now <= $evenDateEnd) {
+                    return $query->where(function ($query) {
+                        $query->whereRaw('MOD(semester, 2) = 0');
+                    });
+                }
+
+                return $query;
             })
             ->columns([
                 Tables\Columns\TextColumn::make('course.name')

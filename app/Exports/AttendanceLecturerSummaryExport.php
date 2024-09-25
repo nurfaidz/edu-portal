@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Helpers\Helper;
 use App\Models\LecturerCourse;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -42,7 +43,7 @@ class AttendanceLecturerSummaryExport implements FromCollection, WithHeadings, W
             'No',
             'Dosen',
             'Mata Kuliah',
-            'Kelas',
+//            'Kelas',
             'Jumlah Hadir',
             'Jumlah Tidak Hadir',
             'Jumlah Izin',
@@ -72,47 +73,75 @@ class AttendanceLecturerSummaryExport implements FromCollection, WithHeadings, W
     }
 
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function collection(): \Illuminate\Support\Collection
     {
-        return $this->query->map(function ($item, $key) {
-//            $lecturerCourse = LecturerCourse::where('lecturer_id', $item->id)->get();
-//            $totalAttendance = 0;
-//            $totalAbsent = 0;
-//            $totalPermission = 0;
-//            $totalReschedule = 0;
-//            $totalSalary = 0;
+//        return $this->query->map(function ($item, $key) {
+//            $lecturerCourse = LecturerCourse::where('user_id', $item->id)->where('academic_year', date('Y'))->get();
+//            $getLecturerCoursesByCurrentSemester = Helper::getCurrentSemester($lecturerCourse);
 //
-//            foreach ($lecturerCourse as $course) {
-//                $totalAttendance += $course->attendance;
-//                $totalAbsent += $course->absent;
-//                $totalPermission += $course->permission;
-//                $totalReschedule += $course->reschedule;
-//                $totalSalary += $course->salary;
-//            }
+//            $courses = $getLecturerCoursesByCurrentSemester->map(function ($course) {
+//                return $course->course->name;
+//            })->implode(', ');
 //
 //            return [
 //                $key + 1,
-//                $item->name,
-//                $lecturerCourse->first()->course->name,
-//                $lecturerCourse->first()->course->classroom,
-//                $totalAttendance,
-//                $totalAbsent,
-//                $totalPermission,
-//                $totalReschedule,
-//                $totalSalary,
+//                $item->lecturerProfile->name,
+//                $courses,
 //            ];
-            $lecturerCourses = LecturerCourse::where('user_id', $item->id)->get();
-//            foreach ($lecturerCourses as $course) {
-//
-//            }
+//        });
 
-            return [
-                $key + 1,
-                $item->lecturerProfile->name,
-                $lecturerCourses->first() ? $lecturerCourses->first()->course->name : '-',
-            ];
+        $result = collect();
+
+        $this->query->each(function ($item, $key) use ($result) {
+            $lecturerCourse = LecturerCourse::where('user_id', $item->id)->where('academic_year', date('Y'))->get();
+            $getLecturerCoursesByCurrentSemester = Helper::getCurrentSemester($lecturerCourse);
+
+            $result->push([
+                'no' => $key + 1,
+                'lecturer' => $item->lecturerProfile->name,
+                'course' => null,
+                'attendances' => null,
+                'total_present' => null,
+                'total_absent' => null,
+                'total_excused' => null,
+            ]);
+
+            $getLecturerCoursesByCurrentSemester->each(function ($course) use ($result) {
+                $attendances = collect();
+
+                $totalPresent = 0;
+                $totalAbsent = 0;
+                $totalExcused = 0;
+
+                foreach ($course->schedules as $schedule)
+                {
+                    $scheduleAttendance = $schedule->attendances;
+                    $attendances = $attendances->merge($scheduleAttendance);
+
+                    $pending = $scheduleAttendance->where('status', \App\States\AttendanceStatus\Pending::$name)
+                        ->where('expired_at', '<', now())->count();
+
+                    $totalAbsent += $scheduleAttendance->where('status', \App\States\AttendanceStatus\Absent::$name)->count() + $pending;
+                    $totalPresent += $scheduleAttendance->where('status', \App\States\AttendanceStatus\Present::$name)->count();
+                    $totalExcused += $scheduleAttendance->where('status', \App\States\AttendanceStatus\Excused::$name)->count();
+                }
+
+//                dd($attendances);
+
+                $result->push([
+                    'no' => null,
+                    'lecturer' => null,
+                    'course' => $course->course->name,
+//                    'class' => $course->class
+                    'total_present' => $totalPresent,
+                    'total_absent' => $totalAbsent,
+                    'total_excused' => $totalExcused,
+                ]);
+            });
         });
+
+        return $result;
     }
 }
