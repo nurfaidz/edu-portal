@@ -102,10 +102,10 @@ class AttendanceLecturerSummaryExport implements FromCollection, WithHeadings, W
                 'no' => $key + 1,
                 'lecturer' => $item->lecturerProfile->name,
                 'course' => null,
-                'attendances' => null,
                 'total_present' => null,
                 'total_absent' => null,
                 'total_excused' => null,
+                'total_reschedule' => null,
             ]);
 
             $getLecturerCoursesByCurrentSemester->each(function ($course) use ($result) {
@@ -128,16 +128,16 @@ class AttendanceLecturerSummaryExport implements FromCollection, WithHeadings, W
                     $totalExcused += $scheduleAttendance->where('status', \App\States\AttendanceStatus\Excused::$name)->count();
                 }
 
-//                dd($attendances);
+                $totalReschedule = $course->schedules->where('is_reschedule', true)->count();
 
                 $result->push([
                     'no' => null,
                     'lecturer' => null,
                     'course' => $course->course->name,
-//                    'class' => $course->class
                     'total_present' => $totalPresent,
                     'total_absent' => $totalAbsent,
                     'total_excused' => $totalExcused,
+                    'total_reschedule' => $totalReschedule,
                 ]);
             });
         });
@@ -145,3 +145,4 @@ class AttendanceLecturerSummaryExport implements FromCollection, WithHeadings, W
         return $result;
     }
 }
+
