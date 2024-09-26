@@ -103,11 +103,23 @@ class AttendanceLecturerResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
+        $oddDateStart = date('Y') . '-02-01';
+        $oddDateEnd = date('Y') . '-08-31';
+        $evenDateStart = date('Y') . '-09-01';
+        $evenDateEnd = date('Y') . '-12-31';
+        $now = date('Y-m-d');
+
         return parent::getEloquentQuery()
             ->whereHas('lecturerCourse', function ($query) {
                 $query->where('user_id', auth()->id());
             })
-            ->where('academic_year', now()->year);
+            ->where(function ($query) use ($oddDateStart, $oddDateEnd, $evenDateStart, $evenDateEnd, $now) {
+                if ($now >= $oddDateStart && $now <= $oddDateEnd) {
+                    $query->whereRaw('MOD(semester, 2) <> 0')->where('academic_year', now()->year);
+                } elseif ($now >= $evenDateStart && $now <= $evenDateEnd) {
+                    $query->whereRaw('MOD(semester, 2) = 0')->where('academic_year', now()->year);
+                }
+            });
     }
 
     public static function canAccess(): bool
