@@ -3,6 +3,9 @@
 namespace App\Helpers;
 
 use Illuminate\Support\Collection;
+use Milon\Barcode\DNS1D;
+use Milon\Barcode\DNS2D;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class Helper
 {
@@ -42,10 +45,11 @@ class Helper
     }
 
 
-    /*
+    /**
      * Get the current semester based on now date by lecturer
      *
      * @param Collection $query
+     * @return Collection
      */
     public static function getCurrentSemesterCourses($query)
     {
@@ -74,5 +78,18 @@ class Helper
         }
 
         return $query;
+    }
+
+    /**
+     * Generate QrCode for attendance Student
+     *
+     * @param string $scheduleId
+     * @return string
+     */
+    public static function generateQrCode(string $scheduleId)
+    {
+        $generate = QrCode::format('png')->size(300)->generate($scheduleId);
+
+        return $generate;
     }
 }

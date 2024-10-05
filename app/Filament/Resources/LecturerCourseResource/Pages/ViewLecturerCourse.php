@@ -15,6 +15,7 @@ use Filament\Infolists;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Support\HtmlString;
 
 class ViewLecturerCourse extends ViewRecord
 {
@@ -23,14 +24,12 @@ class ViewLecturerCourse extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('Buat Barcode')
+            \App\Filament\Cores\Actions\CopyAction::make('Buat Barcode')
                 ->label('Buat Barcode')
-                ->action(function () {
-                    Notification::make()
-                        ->title('Get Will Soon')
-                        ->body('Fitur ini akan segera hadir.')
-                        ->warning()
-                        ->send();
+                ->copyable(function () {
+                    $qrCode = \App\Helpers\Helper::generateQrCode($this->record->id);
+
+                    return new HtmlString('data:image/png;base64,' . base64_encode($qrCode));
                 }),
             Actions\Action::make('attendance')
                 ->label('Lakukan Absensi')

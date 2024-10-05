@@ -86,6 +86,16 @@ class EditCourse extends EditRecord
                             foreach ($data['student_id'] as $studentId) {
                                 $userId = \App\Models\User::where('id', $studentId)->first()->id;
 
+                                $studentCourse = \App\Models\StudentCourse::where('user_id', $userId)
+                                    ->where('course_id', $this->record->id)
+                                    ->where('semester', $this->record->semester)
+                                    ->where('academic_year', $data['academic_year'])
+                                    ->first();
+
+                                if ($studentCourse) {
+                                    continue;
+                                }
+
                                 \App\Models\StudentCourse::create([
                                     'user_id' => $userId,
                                     'course_id' => $this->record->id,
@@ -95,10 +105,10 @@ class EditCourse extends EditRecord
                             }
 
                             Notification::make()
-                            ->title('Berhasil menambahkan')
-                            ->body('Mahasiswa berhasil ditambahkan ke mata kuliah ini')
-                            ->success()
-                            ->send();
+                                ->title('Berhasil menambahkan')
+                                ->body('Mahasiswa berhasil ditambahkan ke mata kuliah ini')
+                                ->success()
+                                ->send();
 
                             return redirect()->route('filament.admin.resources.courses.edit', $this->record);
 

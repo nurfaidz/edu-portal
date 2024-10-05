@@ -15,7 +15,7 @@ class StudentCoursesRelationManager extends RelationManager
 {
     protected static string $relationship = 'studentCourses';
 
-    protected static ?string $title = 'Mahasiswa yang Terdaftar ditampilkan berdasarkan Semester dan Tahun Akademik yang berbeda';
+    protected static ?string $title = 'Mahasiswa yang Terdaftar akan ditampilakn untuk tahun akademik saat ini';
 
     public function form(Form $form): Form
     {
@@ -62,11 +62,13 @@ class StudentCoursesRelationManager extends RelationManager
                             ->required(),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
-                        if (isset($data['semester']) && isset($data['academic_year'])) {
-                            return $query->where('semester', $data['semester'])
-                                ->where('academic_year', $data['academic_year']);
-                        }
-                        return $query;
+                        return $query
+                            ->when(isset($data['semester']), function (Builder $query) use ($data) {
+                                return $query->where('semester', $data['semester']);
+                            })
+                            ->when(isset($data['academic_year']), function (Builder $query) use ($data) {
+                                return $query->where('academic_year', $data['academic_year']);
+                            });
                     }),
             ])
             ->deferLoading()

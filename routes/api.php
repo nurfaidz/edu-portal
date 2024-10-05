@@ -34,5 +34,8 @@ Route::middleware([])->name('api.')->group(function () {
         // Get All Attendance List
         Route::get('attendance/all', [Api\AttendanceController::class, 'getAllAttendanceList']);
 
+        // Store Attendance Student
+        Route::post('attendance/store', [Api\AttendanceController::class, 'store']);
+
     });
 });
