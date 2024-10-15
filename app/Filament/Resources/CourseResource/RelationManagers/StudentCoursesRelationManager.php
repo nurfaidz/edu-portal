@@ -15,7 +15,7 @@ class StudentCoursesRelationManager extends RelationManager
 {
     protected static string $relationship = 'studentCourses';
 
-    protected static ?string $title = 'Mahasiswa yang Terdaftar akan ditampilakn untuk tahun akademik saat ini';
+    protected static ?string $title = 'Mahasiswa yang Terdaftar akan ditampilkan untuk tahun akademik saat ini';
 
     public function form(Form $form): Form
     {
