@@ -23,13 +23,18 @@ class PayrollSetting extends SettingsPage
             ->schema([
                 Forms\Components\Section::make('Setting Upah')
                     ->schema([
-                    Forms\Components\TextInput::make('amount')
-                        ->label('Upah Dosen')
-                        ->helperText('Upah dosen per pertemuan')
-                        ->minValue(0)
-                        ->numeric()
-                        ->required(),
-                ]),
+                        Forms\Components\TextInput::make('amount_transport_salary')
+                            ->label('Upah Transport')
+                            ->minValue(0)
+                            ->numeric()
+                            ->required(),
+                        Forms\Components\TextInput::make('amount_sks_salary')
+                            ->label('Upah per SKS')
+                            ->helperText('contoh: Rp 100.000 untuk 1 SKS')
+                            ->minValue(0)
+                            ->numeric()
+                            ->required(),
+                    ]),
             ]);
     }
 

@@ -7,10 +7,12 @@ use Spatie\LaravelSettings\Settings;
 class PayrollLecturer extends Settings
 {
 
-    public int $amount;
+    public int $amount_transport_salary;
+
+    public int $amount_sks_salary;
 
     public static function group(): string
     {
-        return 'payroll';
+        return 'salary';
     }
 }
