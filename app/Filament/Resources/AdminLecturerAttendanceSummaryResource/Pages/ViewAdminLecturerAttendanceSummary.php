@@ -72,7 +72,8 @@ class ViewAdminLecturerAttendanceSummary extends ViewRecord
                             return $attendance->status === Present::$name;
                         })->count();
 
-                        $totalSalary = $attendanceWithPresentStatus * app(PayrollLecturer::class)->amount;
+                        $transportSalary = $attendanceWithPresentStatus * app(PayrollLecturer::class)->amount_transport_salary;
+                        $sksSalary = $lecturerCourse->course->credits * app(PayrollLecturer::class)->amount_sks_salary;
 
                         \App\Models\LecturerSalary::updateOrCreate(
                             [
@@ -81,7 +82,9 @@ class ViewAdminLecturerAttendanceSummary extends ViewRecord
                                 'academic_year' => $lecturerCourse->academic_year,
                             ],
                             [
-                                'amount' => $totalSalary,
+                                'amount_salary_transport' => $transportSalary,
+                                'amount_salary_sks' => $sksSalary,
+                                'total_salary' => $transportSalary + $sksSalary,
                             ]
                         );
 
