@@ -25,9 +25,11 @@ class ScheduleController extends Controller
                     ->where('semester', $lastestSemester);
             })
                 ->where('class', $studentClass)
-                ->whereBetween('date', [$startOfWeek, $endOfWeek])->get();
+                ->whereBetween('date', [$startOfWeek, $endOfWeek])
+                ->orderBy('date')
+                ->get();
 
-            return response()->apiSuccess($schedules);
+            return response()->apiSuccess(\App\Http\Resources\ScheduleJsonResource::collection($schedules));
         } catch (\Exception $e) {
             return response()->apiError(
                 500,
