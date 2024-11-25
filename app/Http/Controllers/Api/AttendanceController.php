@@ -42,16 +42,22 @@ class AttendanceController extends Controller
         try {
             $user = auth()->user();
 
-            $studentCourses = $user->studentCourses;
-            $lastestSemester = $studentCourses->where('academic_year', now()->year)->max('semester');
+            $oddDateStart = date('Y') . '-02-01';
+            $oddDateEnd = date('Y') . '-08-31';
+            $evenDateStart = date('Y') . '-09-01';
+            $evenDateEnd = date('Y') . '-12-31';
+            $now = date('Y-m-d');
 
-            $attendances = \App\Models\Attendance::whereHas('schedule', function ($query) use ($studentCourses, $lastestSemester) {
-                $query->whereHas('lecturerCourse', function ($query) use ($studentCourses, $lastestSemester) {
-                    $query->whereIn('course_id', $studentCourses->pluck('course_id'))
-                        ->where('academic_year', now()->year)
-                        ->where('semester', $lastestSemester);
-                });
-            })->where('attendable_id', $user->id)->get();
+            $attendances = \App\Models\Attendance::whereHas('schedule', function ($query) use ($oddDateStart, $oddDateEnd, $evenDateStart, $evenDateEnd, $now) {
+                if ($now >= $oddDateStart && $now <= $oddDateEnd) {
+                    $query->whereRaw('MOD(semester, 2) <> 0')->where('academic_year', now()->year);
+                } elseif ($now >= $evenDateStart && $now <= $evenDateEnd) {
+                    $query->whereRaw('MOD(semester, 2) = 0')->where('academic_year', now()->year);
+                }
+            })
+                ->where('expired_at', '<', now())
+                ->where('attendable_id', $user->id)
+                ->get();
 
             return response()->apiSuccess(AttendanceJsonResource::collection($attendances));
         } catch (\Exception $e) {
