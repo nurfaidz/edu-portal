@@ -11,6 +11,8 @@ class LogoutApiController extends Controller
     {
         auth()->user()->tokens()->delete();
 
-        return response()->apiSuccess([]);
+        return response()->apiSuccess(
+            'Success',
+        );
     }
 }

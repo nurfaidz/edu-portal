@@ -44,42 +44,6 @@ class Helper
         return $lecturerCourses;
     }
 
-
-    /**
-     * Get the current semester based on now date by lecturer
-     *
-     * @param Collection $query
-     * @return Collection
-     */
-    public static function getCurrentSemesterCourses($query)
-    {
-        // get odd date start : February - August
-        $oddDateStart = date('Y') . '-02-01';
-        $oddDateEnd = date('Y') . '-08-31';
-
-        // get even date start : September - January
-        $evenDateStart = date('Y') . '-09-01';
-        $evenDateEnd = date('Y') . '-12-31';
-
-        $now = date('Y-m-d');
-
-        $isOddSemester = function ($semester) {
-            return $semester % 2 !== 0;
-        };
-
-        if ($now >= $oddDateStart && $now <= $oddDateEnd) {
-            return $query->filter(function ($course) use ($isOddSemester) {
-                return $isOddSemester($course->semester);
-            });
-        } elseif ($now >= $evenDateStart && $now <= $evenDateEnd) {
-            return $query->filter(function ($course) use ($isOddSemester) {
-                return !$isOddSemester($course->semester);
-            });
-        }
-
-        return $query;
-    }
-
     /**
      * Generate QrCode for attendance Student
      *
@@ -88,7 +52,8 @@ class Helper
      */
     public static function generateQrCode(string $scheduleId)
     {
-        $generate = QrCode::format('png')->size(300)->generate($scheduleId);
+        $barcode = new DNS2D();
+        $generate = $barcode->getBarcodePNG($scheduleId, 'QRCODE', 30, 30);
 
         return $generate;
     }

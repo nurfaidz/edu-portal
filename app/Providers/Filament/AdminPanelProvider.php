@@ -76,9 +76,10 @@ class AdminPanelProvider extends PanelProvider
             );
         });
 
-        Response::macro('apiSuccess', function ($data) {
+        Response::macro('apiSuccess', function ($message, $data = []) {
             return Response::make(
                 [
+                    'message' => $message,
                     'data' => $data,
                 ],
             );

@@ -26,9 +26,12 @@ class LoginApiController extends Controller
             ], 404);
         }
 
-        return response()->apiSuccess([
-            'token' => $user->createToken('api_token')->plainTextToken,
-            'user' => $user,
-        ]);
+        return response()->apiSuccess(
+            'Success',
+            [
+                'token' => $user->createToken('api_token')->plainTextToken,
+                'user' => $user
+            ]
+        );
     }
 }

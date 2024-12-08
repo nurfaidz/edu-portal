@@ -26,6 +26,7 @@ class CopyAction extends Action
         $this->action(function ($livewire, $record) {
             Notification::make()
                 ->title('Barcode berhasil dibuat')
+                ->body('Silahkan paste barcode di tab baru')
                 ->success()
                 ->send();
         });

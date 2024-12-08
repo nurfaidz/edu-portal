@@ -28,7 +28,10 @@ class AttendanceController extends Controller
                 ->where('attendable_id', $user->id)
                 ->get();
 
-            return response()->apiSuccess(AttendanceJsonResource::collection($attendances));
+            return response()->apiSuccess(
+                'Success',
+                AttendanceJsonResource::collection($attendances)
+            );
         } catch (\Exception $e) {
             return response()->apiError(
                 500,
@@ -59,7 +62,10 @@ class AttendanceController extends Controller
                 ->where('attendable_id', $user->id)
                 ->get();
 
-            return response()->apiSuccess(AttendanceJsonResource::collection($attendances));
+            return response()->apiSuccess(
+                'Success',
+                AttendanceJsonResource::collection($attendances)
+            );
         } catch (\Exception $e) {
             return response()->apiError(
                 500,
@@ -84,13 +90,11 @@ class AttendanceController extends Controller
             $startDate = $date->setTimeFrom($start)->subMinutes(10);
 
             if (!$attendance) {
-                return response()->apiError(
-                    400,
+                return response()->apiSuccess(
                     'Anda tidak terdaftar dalam jadwal ini',
                 );
             } elseif (now() < $startDate) {
-                return response()->apiError(
-                    400,
+                return response()->apiSuccess(
                     'Anda belum bisa melakukan absen',
                 );
             } elseif (now() > $attendance->expired_at) {
@@ -98,10 +102,12 @@ class AttendanceController extends Controller
                     'status' => Absent::$name
                 ]);
 
-                return response()->apiError(
-                    200,
+                return response()->apiSuccess(
                     'Waktu absen sudah berakhir',
-                    new AttendanceJsonResource($attendance),
+                );
+            } elseif ($attendance->status === Present::$name) {
+                return response()->apiSuccess(
+                    'Anda sudah melakukan absen',
                 );
             } else {
                 $attendance->update([
@@ -109,7 +115,10 @@ class AttendanceController extends Controller
                 ]);
             }
 
-            return response()->apiSuccess(new AttendanceJsonResource($attendance));
+            return response()->apiSuccess(
+                'Success',
+                new AttendanceJsonResource($attendance)
+            );
 
         } catch (\Exception $e) {
             return response()->apiError(

@@ -24,12 +24,12 @@ class ViewLecturerCourse extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            \App\Filament\Cores\Actions\CopyAction::make('Buat Barcode')
-                ->label('Buat Barcode')
+            \App\Filament\Cores\Actions\CopyAction::make('Buat Kode QR')
+                ->label('Buat Kode QR')
                 ->copyable(function () {
                     $qrCode = \App\Helpers\Helper::generateQrCode($this->record->id);
 
-                    return new HtmlString('data:image/png;base64,' . base64_encode($qrCode));
+                    return new HtmlString('data:image/png;base64,' . $qrCode);
                 }),
             Actions\Action::make('attendance')
                 ->label('Lakukan Absensi')

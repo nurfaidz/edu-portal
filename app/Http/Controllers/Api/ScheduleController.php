@@ -29,7 +29,10 @@ class ScheduleController extends Controller
                 ->orderBy('date')
                 ->get();
 
-            return response()->apiSuccess(\App\Http\Resources\ScheduleJsonResource::collection($schedules));
+            return response()->apiSuccess(
+                'Success',
+                \App\Http\Resources\ScheduleJsonResource::collection($schedules)
+            );
         } catch (\Exception $e) {
             return response()->apiError(
                 500,
