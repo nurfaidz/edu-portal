@@ -52,7 +52,7 @@ class AdminResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\Textcolumn::make('name')
+                Tables\Columns\TextColumn::make('name')
                     ->label('Nama')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')

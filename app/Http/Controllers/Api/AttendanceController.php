@@ -59,7 +59,7 @@ class AttendanceController extends Controller
                     $query->whereRaw('MOD(semester, 2) = 0')->where('academic_year', now()->year);
                 }
             })
-                ->whereDate('expired_at', '<=', now())
+                ->whereDate('expired_at', '<= ', now())
                 ->where('attendable_id', $user->id)
                 ->get();
 
