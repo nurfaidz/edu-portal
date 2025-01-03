@@ -60,7 +60,7 @@ class CourseResource extends Resource
                                 Type::Elective->value => 'Pilihan',
                             ])
                             ->required(),
-                        Forms\Components\TextArea::make('description')
+                        Forms\Components\Textarea::make('description')
                             ->label('Deskripsi'),
                     ])
             ]);

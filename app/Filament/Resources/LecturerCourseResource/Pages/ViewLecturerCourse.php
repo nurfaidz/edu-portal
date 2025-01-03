@@ -16,6 +16,7 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\HtmlString;
+use Milon\Barcode\DNS2D;
 
 class ViewLecturerCourse extends ViewRecord
 {
@@ -24,13 +25,10 @@ class ViewLecturerCourse extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            \App\Filament\Cores\Actions\CopyAction::make('Buat Kode QR')
+            \Filament\Actions\Action::make('Buat Kode QR')
                 ->label('Buat Kode QR')
-                ->copyable(function () {
-                    $qrCode = \App\Helpers\Helper::generateQrCode($this->record->id);
-
-                    return new HtmlString('data:image/png;base64,' . $qrCode);
-                }),
+                ->url(route('qr-code', $this->record->id))
+                ->openUrlInNewTab(),
             Actions\Action::make('attendance')
                 ->label('Lakukan Absensi')
                 ->modalHeading('Lakukan Absensi')
@@ -108,7 +106,7 @@ class ViewLecturerCourse extends ViewRecord
                         $expiredAt = \Carbon\Carbon::parse($record->attendanceLecturer->expired_at);
 
                         $expiredDate = $date->setTimeFrom($expiredAt);
-                        $addExpired = $expiredDate->addMinutes((int) $data['expired_at']);
+                        $addExpired = $expiredDate->addMinutes((int)$data['expired_at']);
 
                         \DB::transaction(function () use ($addExpired, $record) {
                             $record->attendanceLecturer->update([

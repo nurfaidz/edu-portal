@@ -5,7 +5,6 @@ namespace App\Helpers;
 use Illuminate\Support\Collection;
 use Milon\Barcode\DNS1D;
 use Milon\Barcode\DNS2D;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class Helper
 {
