@@ -79,27 +79,19 @@ class LecturerCourseResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $oddDateStart = date('Y') . '-02-01';
-        $oddDateEnd = date('Y') . '-08-31';
-        $evenDateStart = date('Y') . '-09-01';
-        $evenDateEnd = date('Y') . '-12-31';
-        $now = date('Y-m-d');
+        $monthDay = date('m-d');
 
         $lecturerId = auth()->user()->id;
-        return parent::getEloquentQuery()->whereHas('lecturerCourse', function ($query) use ($lecturerId) {
-            $oddDateStart = date('Y') . '-02-01';
-            $oddDateEnd = date('Y') . '-08-31';
-            $evenDateStart = date('Y') . '-09-01';
-            $evenDateEnd = date('Y') . '-12-31';
-            $now = date('Y-m-d');
 
-            if ($now >= $oddDateStart && $now <= $oddDateEnd) {
-                $query->whereRaw('MOD(semester, 2) <> 0')->where('academic_year', now()->year);
-            } elseif ($now >= $evenDateStart && $now <= $evenDateEnd) {
+        return parent::getEloquentQuery()->whereHas('lecturerCourse', function ($query) use ($lecturerId, $monthDay) {
+            if ($monthDay >= '02-01' && $monthDay <= '08-31') {
                 $query->whereRaw('MOD(semester, 2) = 0')->where('academic_year', now()->year);
+            } else {
+                $query->whereRaw('MOD(semester, 2) <> 0')->where('academic_year', now()->year);
             }
             $query->where('user_id', $lecturerId);
         })->where('date', now()->format('Y-m-d'));
+
     }
 
 
