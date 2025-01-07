@@ -11,21 +11,16 @@ class AttendanceOverview extends BaseWidget
 {
     protected function getStats(): array
     {
-
-        $oddDateStart = date('Y') . '-02-01';
-        $oddDateEnd = date('Y') . '-08-31';
-        $evenDateStart = date('Y') . '-09-01';
-        $evenDateEnd = date('Y') . '-12-31';
-        $now = date('Y-m-d');
+        $monthDay = date('m-d');
 
         $query = Schedule::whereHas('lecturerCourse', function ($query) {
             $query->where('user_id', auth()->id());
         })
-            ->where(function ($query) use ($oddDateStart, $oddDateEnd, $evenDateStart, $evenDateEnd, $now) {
-                if ($now >= $oddDateStart && $now <= $oddDateEnd) {
-                    $query->whereRaw('MOD(semester, 2) <> 0')->where('academic_year', now()->year);
-                } elseif ($now >= $evenDateStart && $now <= $evenDateEnd) {
+            ->where(function ($query) use ($monthDay) {
+                if ($monthDay >= '02-01' && $monthDay <= '08-31') {
                     $query->whereRaw('MOD(semester, 2) = 0')->where('academic_year', now()->year);
+                } else {
+                    $query->whereRaw('MOD(semester, 2) <> 0')->where('academic_year', now()->year);
                 }
             })
             ->get();

@@ -118,9 +118,9 @@ class ScheduleResource extends Resource
         return parent::getEloquentQuery()
             ->where(function ($query) use ($monthDay) {
                 if ($monthDay >= '02-01' && $monthDay <= '08-31') {
-                    $query->whereRaw('MOD(semester, 2) = 0');
+                    $query->whereRaw('MOD(semester, 2) = 0')->where('academic_year', now()->year);
                 } else {
-                    $query->whereRaw('MOD(semester, 2) <> 0');
+                    $query->whereRaw('MOD(semester, 2) <> 0')->where('academic_year', now()->year);
                 }
             });
     }
