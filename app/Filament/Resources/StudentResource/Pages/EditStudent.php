@@ -28,6 +28,7 @@ class EditStudent extends EditRecord
                     }
 
                     try {
+                        $this->record->studentProfile->delete();
                         $this->record->delete();
 
                         Notification::make()

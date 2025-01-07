@@ -41,9 +41,11 @@ class StudentResource extends Resource
                 ->schema([
                     Forms\Components\TextInput::make('name')
                         ->label('Username')
+                        ->unique(ignoreRecord: true)
                         ->required(),
                     Forms\Components\TextInput::make('email')
                         ->label('Email')
+                        ->unique(ignoreRecord: true)
                         ->required(),
                     Forms\Components\Group::make()
                         ->relationship('studentProfile')
@@ -52,6 +54,7 @@ class StudentResource extends Resource
                                 ->label('Nama Mahasiswa')
                                 ->required(),
                             Forms\Components\TextInput::make('nim')
+                                ->unique(ignoreRecord: true)
                                 ->label('Nomor Induk Mahasiswa')
                                 ->required(),
                             Forms\Components\Select::make('class')
