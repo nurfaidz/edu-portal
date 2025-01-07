@@ -34,7 +34,7 @@ class LecturerCourseRelationManager extends RelationManager
                 $oddDateStart = date('Y') . '-02-01';
                 $oddDateEnd = date('Y') . '-08-31';
                 $evenDateStart = date('Y') . '-09-01';
-                $evenDateEnd = date('Y') . '-12-31';
+                $evenDateEnd = date('Y') . '-01-31';
                 $now = date('Y-m-d');
 
                 if ($now >= $oddDateStart && $now <= $oddDateEnd) {

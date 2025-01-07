@@ -12,30 +12,23 @@ class AttendanceOverview extends BaseWidget
 
     protected function getStats(): array
     {
-        $oddDateStart = date('Y') . '-02-01';
-        $oddDateEnd = date('Y') . '-08-31';
-        $evenDateStart = date('Y') . '-09-01';
-        $evenDateEnd = date('Y') . '-12-31';
-        $now = date('Y-m-d');
-
+        $monthDay = date('m-d');
         $queryAttendances = collect();
         $queryChangeSchedules = collect();
 
         $query = \App\Helpers\Helper::getCurrentSemester($this->record->lecturerCourses);
 
         foreach ($query as $course) {
-            if ($now >= $oddDateStart && $now <= $oddDateEnd) {
-                $schedules = $course->schedules()->whereRaw('MOD(semester, 2) <> 0')->get();
-                $queryChangeSchedules = $queryChangeSchedules->merge($schedules);
-                foreach ($schedules as $schedule) {
-                    $queryAttendances = $queryAttendances->merge($schedule->attendances);
-                }
-            } elseif ($now >= $evenDateStart && $now <= $evenDateEnd) {
+            if ($monthDay >= '02-01' && $monthDay <= '08-31') {
                 $schedules = $course->schedules()->whereRaw('MOD(semester, 2) = 0')->get();
-                $queryChangeSchedules = $queryChangeSchedules->merge($schedules);
-                foreach ($schedules as $schedule) {
-                    $queryAttendances = $queryAttendances->merge($schedule->attendances);
-                }
+            } else {
+                $schedules = $course->schedules()->whereRaw('MOD(semester, 2) <> 0')->get();
+            }
+
+            $queryChangeSchedules = $queryChangeSchedules->merge($schedules);
+
+            foreach ($schedules as $schedule) {
+                $queryAttendances = $queryAttendances->merge($schedule->attendances)->where('attendable_id', $this->record->user_id);
             }
         }
 

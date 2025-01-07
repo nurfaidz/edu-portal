@@ -37,7 +37,7 @@ class AttendancesRelationManager extends RelationManager
                 $oddDateStart = date('Y') . '-02-01';
                 $oddDateEnd = date('Y') . '-08-31';
                 $evenDateStart = date('Y') . '-09-01';
-                $evenDateEnd = date('Y') . '-12-31';
+                $evenDateEnd = date('Y') . '-01-31';
                 $now = date('Y-m-d');
 
                 return $query->whereHas('schedule', function ($query) use ($oddDateStart, $oddDateEnd, $evenDateStart, $evenDateEnd, $now) {
@@ -57,6 +57,8 @@ class AttendancesRelationManager extends RelationManager
                     ->label('Semester'),
                 Tables\Columns\TextColumn::make('schedule.academic_year')
                     ->label('Tahun Akademik'),
+                Tables\Columns\TextColumn::make('expired_at')
+                    ->label('Batas Waktu Absen'),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status Kehadiran')
                     ->badge()

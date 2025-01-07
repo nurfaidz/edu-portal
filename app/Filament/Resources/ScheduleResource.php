@@ -112,6 +112,16 @@ class ScheduleResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->where('academic_year', date('Y'));
+        $now = date('Y-m-d');
+        $monthDay = date('m-d');
+
+        return parent::getEloquentQuery()
+            ->where(function ($query) use ($monthDay) {
+                if ($monthDay >= '02-01' && $monthDay <= '08-31') {
+                    $query->whereRaw('MOD(semester, 2) = 0');
+                } else {
+                    $query->whereRaw('MOD(semester, 2) <> 0');
+                }
+            });
     }
 }

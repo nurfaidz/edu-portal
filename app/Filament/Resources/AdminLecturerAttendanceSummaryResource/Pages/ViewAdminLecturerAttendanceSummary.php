@@ -27,21 +27,17 @@ class ViewAdminLecturerAttendanceSummary extends ViewRecord
                 ->color('info')
                 ->action(function () {
                     try {
-                        $oddDateStart = date('Y') . '-02-01';
-                        $oddDateEnd = date('Y') . '-08-31';
-                        $evenDateStart = date('Y') . '-09-01';
-                        $evenDateEnd = date('Y') . '-12-31';
-                        $now = date('Y-m-d');
+                        $monthDay = date('m-d');
+                        $lecturerCourse = null;
+                        $schedules = collect();
 
-                        if ($now >= $oddDateStart && $now <= $oddDateEnd) {
+                        if ($monthDay >= '02-01' && $monthDay <= '08-31') {
                             $lecturerCourse = \App\Models\LecturerCourse::where('user_id', $this->record->user_id)
-                                ->where('academic_year', now()->year)
-                                ->whereRaw('MOD(semester, 2) <> 0')
-                                ->first();
-                        } elseif ($now >= $evenDateStart && $now <= $evenDateEnd) {
-                            $lecturerCourse = \App\Models\LecturerCourse::where('user_id', $this->record->user_id)
-                                ->where('academic_year', now()->year)
                                 ->whereRaw('MOD(semester, 2) = 0')
+                                ->first();
+                        } else {
+                            $lecturerCourse = \App\Models\LecturerCourse::where('user_id', $this->record->user_id)
+                                ->whereRaw('MOD(semester, 2) <> 0')
                                 ->first();
                         }
 
@@ -51,15 +47,10 @@ class ViewAdminLecturerAttendanceSummary extends ViewRecord
                                 ->body('Dosen belum memiliki mata kuliah pada tahun akademik ini.')
                                 ->danger()
                                 ->send();
-
                             return;
                         }
 
-                        if ($now >= $oddDateStart && $now <= $oddDateEnd) {
-                            $schedules = $lecturerCourse->schedules()->whereRaw('MOD(semester, 2) <> 0')->get();
-                        } elseif ($now >= $evenDateStart && $now <= $evenDateEnd) {
-                            $schedules = $lecturerCourse->schedules()->whereRaw('MOD(semester, 2) = 0')->get();
-                        }
+                        $schedules = $lecturerCourse->schedules()->get();
 
                         $attendances = collect();
 
