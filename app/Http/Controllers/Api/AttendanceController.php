@@ -22,8 +22,7 @@ class AttendanceController extends Controller
             $attendances = \App\Models\Attendance::whereHas('schedule', function ($query) use ($studentCourses, $lastestSemester) {
                 $query->whereHas('lecturerCourse', function ($query) use ($studentCourses, $lastestSemester) {
                     $query->whereIn('course_id', $studentCourses->pluck('course_id'))
-                        ->where('academic_year', now()->year)
-                        ->where('semester', $lastestSemester);
+                        ->where('academic_year', now()->year);
                 })->whereDate('date', now());
             })
                 ->where('attendable_id', $user->id)
