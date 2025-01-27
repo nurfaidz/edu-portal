@@ -11,6 +11,7 @@ use Filament\Infolists\Infolist;
 use Filament\Infolists;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Support\Facades\DB;
 
 class ViewAdminLecturerAttendanceSummary extends ViewRecord
 {
@@ -27,19 +28,19 @@ class ViewAdminLecturerAttendanceSummary extends ViewRecord
                 ->color('info')
                 ->action(function () {
                     try {
+                        DB::beginTransaction();
+
                         $monthDay = date('m-d');
                         $lecturerCourse = null;
-                        $schedules = collect();
 
-                        if ($monthDay >= '02-01' && $monthDay <= '08-31') {
-                            $lecturerCourse = \App\Models\LecturerCourse::where('user_id', $this->record->user_id)
-                                ->whereRaw('MOD(semester, 2) = 0')
-                                ->first();
-                        } else {
-                            $lecturerCourse = \App\Models\LecturerCourse::where('user_id', $this->record->user_id)
-                                ->whereRaw('MOD(semester, 2) <> 0')
-                                ->first();
-                        }
+
+                        $lecturerCourse = \App\Models\LecturerCourse::where('user_id', $this->record->user_id)
+                            ->whereRaw($monthDay >= '02-01' && $monthDay <= '08-31'
+                                ? 'MOD(semester, 2) = 0'  // Semester genap
+                                : 'MOD(semester, 2) <> 0' // Semester ganjil
+                            )
+                            ->where('academic_year', now()->year)
+                            ->first();
 
                         if (!$lecturerCourse) {
                             Notification::make()
@@ -56,7 +57,7 @@ class ViewAdminLecturerAttendanceSummary extends ViewRecord
 
                         foreach ($schedules as $schedule) {
                             $scheduleAttendance = $schedule->attendances;
-                            $attendances = $attendances->merge($scheduleAttendance);
+                            $attendances = $attendances->merge($scheduleAttendance)->where('attendable_id', $this->record->user_id);
                         }
 
                         $attendanceWithPresentStatus = $attendances->filter(function ($attendance) {
@@ -66,18 +67,34 @@ class ViewAdminLecturerAttendanceSummary extends ViewRecord
                         $transportSalary = $attendanceWithPresentStatus * app(PayrollLecturer::class)->amount_transport_salary;
                         $sksSalary = $lecturerCourse->course->credits * app(PayrollLecturer::class)->amount_sks_salary;
 
-                        \App\Models\LecturerSalary::updateOrCreate(
-                            [
-                                'user_id' => $this->record->user_id,
-                                'semester' => $lecturerCourse->semester,
-                                'academic_year' => $lecturerCourse->academic_year,
-                            ],
-                            [
+                        $saveSalary = \App\Models\LecturerSalary::where('user_id', $this->record->user_id)
+                            ->first();
+
+                        $semester = null;
+                            if ($monthDay >= '02-01' && $monthDay <= '08-31') {
+                                $semester = 2;
+                            } else {
+                                $semester = 1;
+                            }
+
+                        if ($saveSalary) {
+                            $saveSalary->update([
+                                'semester' => $semester,
                                 'amount_salary_transport' => $transportSalary,
                                 'amount_salary_sks' => $sksSalary,
                                 'total_salary' => $transportSalary + $sksSalary,
-                            ]
-                        );
+                            ]);
+                        } else {
+                            \App\Models\LecturerSalary::create([
+                                'user_id' => $this->record->user_id,
+                                'semester' => $semester,
+                                'academic_year' => $lecturerCourse->academic_year,
+                                'amount_salary_transport' => $transportSalary,
+                                'amount_salary_sks' => $sksSalary,
+                                'total_salary' => $transportSalary + $sksSalary,
+                            ]);
+                        }
+                        DB::commit();
 
                         Notification::make()
                             ->title('Kalkulasi Upah Berhasil')
@@ -87,6 +104,8 @@ class ViewAdminLecturerAttendanceSummary extends ViewRecord
 
                         return;
                     } catch (\Exception $e) {
+                        DB::rollBack();
+
                         Notification::make()
                             ->title('Kalkulasi Upah Gagal')
                             ->body($e->getMessage())

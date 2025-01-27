@@ -31,19 +31,15 @@ class LecturerCourseRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('title')
             ->modifyQueryUsing(function (Builder $query) {
-                $oddDateStart = date('Y') . '-02-01';
-                $oddDateEnd = date('Y') . '-08-31';
-                $evenDateStart = date('Y') . '-09-01';
-                $evenDateEnd = date('Y') . '-01-31';
-                $now = date('Y-m-d');
+                $monthDay = date('m-d'); // Ambil bulan dan tanggal saja (format MM-DD)
 
-                if ($now >= $oddDateStart && $now <= $oddDateEnd) {
+                if ($monthDay >= '02-01' && $monthDay <= '08-31') {
                     return $query->where(function ($query) {
-                        $query->whereRaw('MOD(semester, 2) <> 0');
+                        $query->whereRaw('MOD(semester, 2) = 0')->where('academic_year', now()->year);
                     });
-                } elseif ($now >= $evenDateStart && $now <= $evenDateEnd) {
+                } else {
                     return $query->where(function ($query) {
-                        $query->whereRaw('MOD(semester, 2) = 0');
+                        $query->whereRaw('MOD(semester, 2) <> 0')->where('academic_year', now()->year);
                     });
                 }
 

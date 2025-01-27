@@ -16,13 +16,17 @@ class AttendanceOverview extends BaseWidget
         $queryAttendances = collect();
         $queryChangeSchedules = collect();
 
-        $query = \App\Helpers\Helper::getCurrentSemester($this->record->lecturerCourses);
-
-        foreach ($query as $course) {
+        foreach ($this->record->lecturerCourses as $course) {
             if ($monthDay >= '02-01' && $monthDay <= '08-31') {
-                $schedules = $course->schedules()->whereRaw('MOD(semester, 2) = 0')->get();
+                $schedules = $course->schedules()
+                    ->whereRaw('MOD(semester, 2) = 0')
+                    ->where('academic_year', now()->year)
+                    ->get();
             } else {
-                $schedules = $course->schedules()->whereRaw('MOD(semester, 2) <> 0')->get();
+                $schedules = $course->schedules()
+                    ->whereRaw('MOD(semester, 2) <> 0')
+                    ->where('academic_year', now()->year)
+                    ->get();
             }
 
             $queryChangeSchedules = $queryChangeSchedules->merge($schedules);
