@@ -11,4 +11,13 @@ class AccountWidget extends WidgetsAccountWidget
      * @var view-string
      */
     protected static string $view = 'account-widget';
+
+    protected static ?int $sort = -3;
+
+    protected static bool $isLazy = false;
+
+    public function getColumnSpan(): int|string|array
+    {
+        return 2;
+    }
 }

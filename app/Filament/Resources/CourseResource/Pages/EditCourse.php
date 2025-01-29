@@ -7,7 +7,9 @@ use Filament\Actions;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
 use Livewire\Form;
+use function Laravel\Prompts\clear;
 
 class EditCourse extends EditRecord
 {
@@ -124,4 +126,45 @@ class EditCourse extends EditRecord
                     })
         ];
     }
+
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        if ($record->lecturerCourse()->where('academic_year', now()->year)->exists()) {
+            session()->flash('error', 'update_failed');
+
+            return $record;
+        } elseif ($record->studentCourses()->where('academic_year', now()->year)->exists()) {
+            session()->flash('error', 'update_failed');
+
+            return $record;
+        } else {
+            $record->update($data);
+
+            return $record;
+        }
+    }
+
+    protected function getSavedNotification(): ?Notification
+    {
+        if (session()->get('error') === 'update_failed') {
+            session()->forget('error');
+
+            return Notification::make()
+                ->danger()
+                ->title('Gagal')
+                ->body('Tidak dapat mengubah mata kuliah yang sudah memiliki dosen atau mahasiswa terdaftar');
+        }
+
+        return Notification::make()
+            ->success()
+            ->title('Berhasil')
+            ->body('Data mata kuliah berhasil disimpan');
+    }
+
+    protected function getRedirectUrl(): ?string
+    {
+        return route('filament.admin.resources.courses.edit', $this->record);
+    }
+
+
 }

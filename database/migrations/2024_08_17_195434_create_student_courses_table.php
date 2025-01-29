@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\User::class)->index();
             $table->foreignIdFor(\App\Models\Course::class)->index();
             $table->tinyInteger('semester');
+            $table->decimal('numeric_grade', 3, 2)->nullable();
             $table->year('academic_year');
             $table->timestamps();
         });

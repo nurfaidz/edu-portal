@@ -25,4 +25,9 @@ class LecturerCourse extends Model
     {
         return $this->hasMany(Schedule::class, 'lecturer_course_id');
     }
+
+    public function studentCourses()
+    {
+        return $this->hasMany(StudentCourse::class, 'course_id', 'course_id');
+    }
 }
