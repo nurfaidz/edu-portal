@@ -20,8 +20,8 @@ class AttendanceLecturerChart extends ChartWidget
 
         $lecturerCourses = \App\Models\LecturerCourse::where('user_id', auth()->id())
             ->whereRaw($monthDay >= '02-01' && $monthDay <= '08-31'
-                ? 'MOD(semester, 2) = 0'  // Semester genap
-                : 'MOD(semester, 2) <> 0' // Semester ganjil
+                ? 'MOD(semester, 2) = 0'
+                : 'MOD(semester, 2) <> 0'
             )
             ->where('academic_year', now()->year)
             ->get();
