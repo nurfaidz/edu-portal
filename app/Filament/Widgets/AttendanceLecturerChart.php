@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Schedule;
 use App\States\AttendanceStatus\Absent;
 use App\States\AttendanceStatus\Excused;
 use App\States\AttendanceStatus\Present;
@@ -17,7 +18,7 @@ class AttendanceLecturerChart extends ChartWidget
     {
         $monthDay = date('m-d');
 
-        $lecturerCourse = \App\Models\LecturerCourse::where('user_id', auth()->id())
+        $lecturerCourses = \App\Models\LecturerCourse::where('user_id', auth()->id())
             ->whereRaw($monthDay >= '02-01' && $monthDay <= '08-31'
                 ? 'MOD(semester, 2) = 0'  // Semester genap
                 : 'MOD(semester, 2) <> 0' // Semester ganjil
@@ -25,32 +26,37 @@ class AttendanceLecturerChart extends ChartWidget
             ->where('academic_year', now()->year)
             ->get();
 
-        $attendances = collect();
+        $attendanceData = [];
 
-        foreach ($lecturerCourse as $course) {
+        foreach ($lecturerCourses as $course) {
+            $courseName = $course->course->name;
+            $presentCount = 0;
+
             $schedules = $course->schedules()->get();
-
             foreach ($schedules as $schedule) {
-                $scheduleAttendance = $schedule->attendances;
-                $attendances = $attendances->merge($scheduleAttendance)->where('attendable_id', auth()->id());
+                $scheduleAttendance = $schedule->attendances()
+                    ->where('attendable_type', '\App\Models\Student')
+                    ->where('status', Present::$name)
+                    ->count();
+
+                $presentCount += $scheduleAttendance;
             }
+
+            $attendanceData[] = [
+                'label' => $courseName,
+                'data' => $presentCount
+            ];
         }
 
-        $present = $attendances->where('status', Present::$name)->count();
-        $absent = $attendances->where('status', Absent::$name)->count();
-        $pending = $attendances->where('status', \App\States\AttendanceStatus\Pending::$name)
-            ->where('expired_at', '<', now())->count();
-        $excused = $attendances->where('status', Excused::$name)->count();
-
         return [
-            'labels' => ['Hadir', 'Tidak Hadir', 'Izin'],
             'datasets' => [
                 [
-                    'label' => 'Presentase Kehadiran',
-                    'data' => [$present, $absent + $pending, $excused],
-                    'backgroundColor' => ['#4CAF50', '#F44336', '#FFC107'],
+                    'label' => 'Presentase Hadir',
+                    'data' => array_column($attendanceData, 'data'),
+                    'backgroundColor' => ['#4CAF50', '#FFC107', '#2196F3', '#FF5722'], // Warna berbeda untuk tiap matkul
                 ],
             ],
+            'labels' => array_column($attendanceData, 'label'),
         ];
     }
 

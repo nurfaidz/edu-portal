@@ -76,6 +76,8 @@ class CourseResource extends Resource
                 Tables\Columns\TextColumn::make('code')
                     ->label('Kode')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('semester')
+                    ->label('Semester'),
                 Tables\Columns\TextColumn::make('credits')
                     ->label('SKS'),
                 Tables\Columns\TextColumn::make('type')

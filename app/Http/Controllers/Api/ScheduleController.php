@@ -12,20 +12,25 @@ class ScheduleController extends Controller
         try {
             $user = auth()->user();
 
+            $monthDay = date('m-d');
             $studentClass = $user->studentProfile->class;
             $studentCourses = $user->studentCourses;
-            $lastestSemester = $studentCourses->where('academic_year', now()->year)->max('semester');
 
             $startOfWeek = now()->startOfWeek();
             $endOfWeek = now()->endOfWeek();
 
-            $schedules = \App\Models\Schedule::whereHas('lecturerCourse', function ($query) use ($studentCourses, $lastestSemester) {
-                $query->whereIn('course_id', $studentCourses->pluck('course_id'))
+            $schedules = \App\Models\Schedule::whereHas('lecturerCourse', function ($query) use ($studentCourses, $monthDay) {
+                $query->whereRaw($monthDay >= '02-01' && $monthDay <= '08-31'
+                    ? 'MOD(semester, 2) = 0'
+                    : 'MOD(semester, 2) <> 0'
+                )
                     ->where('academic_year', now()->year)
-                    ->where('semester', $lastestSemester);
+                    ->whereIn('course_id', $studentCourses->pluck('course_id'));
+                $query->whereIn('course_id', $studentCourses->pluck('course_id'));
             })
                 ->where('class', $studentClass)
-                ->whereBetween('date', [$startOfWeek, $endOfWeek])
+                ->whereDate('date', '>=', $startOfWeek)
+                ->whereDate('date', '<=', $endOfWeek)
                 ->orderBy('date')
                 ->get();
 

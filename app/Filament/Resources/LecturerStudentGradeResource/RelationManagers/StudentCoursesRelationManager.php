@@ -65,12 +65,17 @@ class StudentCoursesRelationManager extends RelationManager
                         Forms\Components\TextInput::make('numeric_grade')
                             ->label('Nilai')
                             ->numeric()
+                            ->minLength(3)
                             ->rules([
                                 function (callable $get) {
                                     return function (string $attribute, $value, callable $fail) use ($get) {
                                         // if quantity any '-' example -1, then fail
                                         if ($value < 1) {
                                             $fail('Jumlah tidak boleh kurang dari 1.');
+                                        }
+
+                                        if ($value > 100) {
+                                            $fail('Nilai tidak boleh lebih dari 100.');
                                         }
                                     };
                                 }
@@ -79,6 +84,7 @@ class StudentCoursesRelationManager extends RelationManager
                     ])
                     ->action(function ($record, $data) {
                         try {
+
                             DB::transaction(function () use ($record, $data) {
                                 $record->update($data);
                             });
@@ -96,7 +102,7 @@ class StudentCoursesRelationManager extends RelationManager
                             Notification::make()
                                 ->title('Gagal')
                                 ->body('Input nilai gagal disimpan!')
-                                ->error($e->getMessage())
+                                ->danger()
                                 ->send();
                         }
                     })
