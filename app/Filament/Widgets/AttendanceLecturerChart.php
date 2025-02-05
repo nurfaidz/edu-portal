@@ -2,10 +2,8 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Schedule;
-use App\States\AttendanceStatus\Absent;
-use App\States\AttendanceStatus\Excused;
 use App\States\AttendanceStatus\Present;
+use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 
 class AttendanceLecturerChart extends ChartWidget
@@ -65,36 +63,38 @@ class AttendanceLecturerChart extends ChartWidget
         return 'bar';
     }
 
-    protected function getOptions(): array
+    protected function getOptions(): RawJs
     {
-        return [
-            'responsive' => true,
-            'plugins' => [
-                'legend' => [
-                    'display' => true,
-                    'position' => 'top',
-                ],
-            ],
-            'scales' => [
-                'y' => [
-                    'beginAtZero' => true,
-                    'suggestedMax' => $this->getData()['datasets'][0]['data'][0] + 5,
-                    'title' => [
-                        'display' => true,
-                        'text' => 'Jumlah Kehadiran',
-                    ],
-                ],
-                'x' => [
-                    'title' => [
-                        'display' => true,
-                        'text' => 'Status Kehadiran',
-                    ],
-                ],
-            ],
-            'layout' => [
-                'padding' => 20,
-            ],
-        ];
+        return RawJs::make(<<<JS
+        {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                },
+            },
+            scales: {
+                y:{
+                    beginAtZero: true,
+                    suggestedMax: 100,
+                    ticks: {
+                        callback: (value) => value + ' %',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Jumlah Kehadiran',
+                    },
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Mata Kuliah',
+                        },
+                     },
+            },
+        }
+        JS);
     }
 
     public static function canView(): bool
